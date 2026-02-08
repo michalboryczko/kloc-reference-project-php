@@ -229,3 +229,24 @@ def test_produces_edge(sot_data: SoTData):
         source_node = sot_data.node_by_id(pe["source"])
         assert source_node is not None
         assert source_node["kind"] == "Call", "Source of produces edge should be Call node"
+
+
+@contract_test(
+    name="Assigned from edge: Value -> Value",
+    description="Verifies assigned_from edge from a local Value to its source Value (e.g., $result = call())",
+    category="edge-creation",
+)
+def test_assigned_from_edge(sot_data: SoTData):
+    """Local value assigned from a call result should have assigned_from edge."""
+    assigned_edges = sot_data.edges_by_type("assigned_from")
+    assert len(assigned_edges) >= 1, "Should have at least one assigned_from edge"
+
+    for ae in assigned_edges:
+        source_node = sot_data.node_by_id(ae["source"])
+        target_node = sot_data.node_by_id(ae["target"])
+        assert source_node is not None, f"Source node {ae['source']} should exist"
+        assert target_node is not None, f"Target node {ae['target']} should exist"
+        assert source_node["kind"] == "Value", \
+            f"Source of assigned_from edge should be Value, got {source_node['kind']}"
+        assert target_node["kind"] == "Value", \
+            f"Target of assigned_from edge should be Value, got {target_node['kind']}"

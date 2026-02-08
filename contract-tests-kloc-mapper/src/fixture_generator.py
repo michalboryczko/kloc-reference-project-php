@@ -691,6 +691,7 @@ def build_full_fixture() -> KlocFixtureBuilder:
         symbol=f"{create_order.rstrip('.')}local$result@12",
         type=order_class,
         location={"file": "src/Service/OrderService.php", "line": 12, "col": 8},
+        source_value_id="src/Service/OrderService.php:12:25",  # assigned from call result
     ))
 
     builder.add_value(ValueDef(

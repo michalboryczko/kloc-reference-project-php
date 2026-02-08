@@ -20,6 +20,7 @@ markers = [
     "deps: Dependency query E2E tests",
     "inheritance: Inheritance query E2E tests",
     "context: Context query E2E tests",
+    "overrides: Overrides query E2E tests",
 ]
 
 [tool.ruff]
