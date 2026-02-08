@@ -23,6 +23,7 @@ markers = [
     "owners: Owners command tests",
     "inherit: Inherit command tests",
     "overrides: Overrides command tests",
+    "output: Output format and structure tests",
 ]
 
 [tool.ruff]
