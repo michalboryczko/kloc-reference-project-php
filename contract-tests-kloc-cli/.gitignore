@@ -1,0 +1,7 @@
+output/*.json
+output/*.xml
+output/*.md
+__pycache__/
+*.pyc
+.pytest_cache/
+*.egg-info/
