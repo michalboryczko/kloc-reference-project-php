@@ -35,9 +35,9 @@ abstract class CallsContractTestCase extends TestCase
             self::$calls = CallsData::load(CALLS_JSON_PATH);
         }
 
-        // Load SCIP data if available (optional - won't fail if missing)
+        // Load SCIP data from unified index.json
         if (self::$scip === null && defined('SCIP_JSON_PATH') && file_exists(SCIP_JSON_PATH)) {
-            self::$scip = ScipData::load(SCIP_JSON_PATH);
+            self::$scip = ScipData::loadFromUnifiedJson(SCIP_JSON_PATH);
         }
     }
 
@@ -101,7 +101,7 @@ abstract class CallsContractTestCase extends TestCase
     /**
      * Query within a specific method scope.
      *
-     * @param string $class  Fully qualified class name (e.g., 'App\Repository\OrderRepository')
+     * @param string $class  Fully qualified class name (e.g., 'App\Repository\InMemoryOrderRepository')
      * @param string $method Method name (e.g., 'save')
      */
     protected function inMethod(string $class, string $method): MethodScope
@@ -130,7 +130,7 @@ abstract class CallsContractTestCase extends TestCase
     {
         if (self::$scip === null) {
             throw new \RuntimeException(
-                'SCIP data not loaded. Make sure index.scip.json exists in output directory.'
+                'SCIP data not loaded. Make sure index.json exists in output directory.'
             );
         }
         return new ScipQuery(self::$scip);
@@ -145,7 +145,7 @@ abstract class CallsContractTestCase extends TestCase
     {
         if (self::$scip === null) {
             throw new \RuntimeException(
-                'SCIP data not loaded. Make sure index.scip.json exists in output directory.'
+                'SCIP data not loaded. Make sure index.json exists in output directory.'
             );
         }
         return self::$scip;
@@ -165,7 +165,7 @@ abstract class CallsContractTestCase extends TestCase
     protected function requireScipData(): void
     {
         if (!$this->hasScipData()) {
-            $this->markTestSkipped('SCIP data not available (index.scip.json not found)');
+            $this->markTestSkipped('SCIP data not available (index.json not found)');
         }
     }
 

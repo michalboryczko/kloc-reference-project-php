@@ -283,7 +283,7 @@ class ChainIntegrityTest extends CallsContractTestCase
     )]
     public function testPropertyAccessChain(): void
     {
-        // Code reference: src/Repository/OrderRepository.php:31
+        // Code reference: src/Repository/InMemoryOrderRepository.php:31
         // customerEmail: $order->customerEmail
 
         // Find customerEmail property access in OrderRepository::save()

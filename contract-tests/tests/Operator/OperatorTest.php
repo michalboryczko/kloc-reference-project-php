@@ -8,7 +8,7 @@ use ContractTests\Attribute\ContractTest;
 use ContractTests\CallsContractTestCase;
 
 /**
- * Tests for operator tracking in calls.json.
+ * Tests for operator tracking in index.json.
  *
  * Verifies that PHP operators (coalesce, ternary, match) are tracked
  * with their operand values for data flow analysis.

@@ -187,7 +187,7 @@ class ReceiverAttributionTest extends CallsContractTestCase
      * Verifies all property accesses on $order in OrderRepository::save()
      * share the same receiver_value_id pointing to the $order parameter.
      *
-     * Code reference: src/Repository/OrderRepository.php:31-35
+     * Code reference: src/Repository/InMemoryOrderRepository.php:31-35
      *   $order->customerEmail, $order->productId, $order->quantity,
      *   $order->status, $order->createdAt
      */
@@ -199,7 +199,7 @@ class ReceiverAttributionTest extends CallsContractTestCase
     public function testAllOrderAccessesInSaveShareReceiver(): void
     {
         // Find all property accesses in save() with receivers
-        $allAccesses = $this->inMethod('App\Repository\OrderRepository', 'save')
+        $allAccesses = $this->inMethod('App\Repository\InMemoryOrderRepository', 'save')
             ->calls()
             ->kind('access')
             ->hasReceiver()
@@ -250,7 +250,7 @@ class ReceiverAttributionTest extends CallsContractTestCase
      * Verifies $order->customerEmail at line 31 inside new Order() constructor
      * args has its own separate call entry with correct receiver.
      *
-     * Code reference: src/Repository/OrderRepository.php:31
+     * Code reference: src/Repository/InMemoryOrderRepository.php:31
      *   customerEmail: $order->customerEmail,
      *
      * Issue 2: Property accesses inside constructor argument lists must get

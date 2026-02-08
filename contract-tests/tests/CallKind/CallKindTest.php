@@ -422,7 +422,7 @@ class CallKindTest extends CallsContractTestCase
     )]
     public function testPropertyAccessOnOrderTracked(): void
     {
-        // Code reference: src/Repository/OrderRepository.php:31
+        // Code reference: src/Repository/InMemoryOrderRepository.php:31
         // customerEmail: $order->customerEmail
         $accessCalls = $this->calls()
             ->kind('access')
@@ -449,7 +449,7 @@ class CallKindTest extends CallsContractTestCase
     )]
     public function testArrayAccessOnOrdersTracked(): void
     {
-        // Code reference: src/Repository/OrderRepository.php:23
+        // Code reference: src/Repository/InMemoryOrderRepository.php:23
         // return self::$orders[$id] ?? null;
         $arrayAccessCalls = $this->calls()
             ->kind('access_array')

@@ -8,7 +8,7 @@ use ContractTests\Attribute\ContractTest;
 use ContractTests\CallsContractTestCase;
 
 /**
- * Tests for nullsafe operator handling in calls.json.
+ * Tests for nullsafe operator handling in index.json.
  *
  * Per the finish-mvp spec:
  * - Nullsafe property access ($obj?->prop) uses kind="access" (not access_nullsafe)
@@ -94,7 +94,7 @@ class NullsafeKindTest extends CallsContractTestCase
 
     #[ContractTest(
         name: 'No access_nullsafe Kind Exists',
-        description: 'Verifies calls.json contains ZERO calls with kind="access_nullsafe". This kind has been removed in favor of access with union return type.',
+        description: 'Verifies index.json contains ZERO calls with kind="access_nullsafe". This kind has been removed in favor of access with union return type.',
         category: 'callkind',
             )]
     public function testNoAccessNullsafeKindExists(): void
@@ -219,7 +219,7 @@ class NullsafeKindTest extends CallsContractTestCase
 
     #[ContractTest(
         name: 'No method_nullsafe Kind Exists',
-        description: 'Verifies calls.json contains ZERO calls with kind="method_nullsafe". This kind has been removed in favor of method with union return type.',
+        description: 'Verifies index.json contains ZERO calls with kind="method_nullsafe". This kind has been removed in favor of method with union return type.',
         category: 'callkind',
             )]
     public function testNoMethodNullsafeKindExists(): void

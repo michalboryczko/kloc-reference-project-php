@@ -1,6 +1,6 @@
 {
     "name": "kloc/contract-tests",
-    "description": "Contract testing framework for validating scip-php calls.json output",
+    "description": "Contract testing framework for validating scip-php index.json output",
     "type": "project",
     "license": "MIT",
     "require": {

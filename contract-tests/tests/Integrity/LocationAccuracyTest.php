@@ -8,7 +8,7 @@ use ContractTests\Attribute\ContractTest;
 use ContractTests\CallsContractTestCase;
 
 /**
- * Tests for location accuracy of calls in calls.json.
+ * Tests for location accuracy of calls in index.json.
  *
  * Validates that call locations point to the actual source code position
  * of the operation, not to an enclosing expression's position.
@@ -27,7 +27,7 @@ class LocationAccuracyTest extends CallsContractTestCase
     /**
      * Verifies self::$nextId++ at line 30 has location.line=30 (not 29).
      *
-     * Code reference: src/Repository/OrderRepository.php:29-30
+     * Code reference: src/Repository/InMemoryOrderRepository.php:29-30
      *   $newOrder = new Order(          // line 29
      *       id: self::$nextId++,        // line 30
      *
@@ -63,7 +63,7 @@ class LocationAccuracyTest extends CallsContractTestCase
         );
 
         $this->assertStringContainsString(
-            'OrderRepository.php',
+            'InMemoryOrderRepository.php',
             $location['file'] ?? '',
             'Location file should be OrderRepository.php'
         );
@@ -72,7 +72,7 @@ class LocationAccuracyTest extends CallsContractTestCase
     /**
      * Verifies constructor new Order() and self::$nextId++ are on different lines.
      *
-     * Code reference: src/Repository/OrderRepository.php:29-30
+     * Code reference: src/Repository/InMemoryOrderRepository.php:29-30
      *
      * This ensures the two adjacent operations (constructor and static property
      * access) have distinct, accurate locations.
@@ -123,7 +123,7 @@ class LocationAccuracyTest extends CallsContractTestCase
      * Verifies property accesses inside new Order() constructor arguments
      * have accurate locations matching their actual source lines.
      *
-     * Code reference: src/Repository/OrderRepository.php:31-35
+     * Code reference: src/Repository/InMemoryOrderRepository.php:31-35
      *   customerEmail: $order->customerEmail,  // line 31
      *   productId: $order->productId,          // line 32
      *   quantity: $order->quantity,             // line 33

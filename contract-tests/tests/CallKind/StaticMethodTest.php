@@ -8,7 +8,7 @@ use ContractTests\Attribute\ContractTest;
 use ContractTests\CallsContractTestCase;
 
 /**
- * Tests for static method call tracking in calls.json.
+ * Tests for static method call tracking in index.json.
  *
  * Verifies that static method calls (Class::method(), self::method(), static::method())
  * are properly tracked with kind=method_static and correct argument binding.

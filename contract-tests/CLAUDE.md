@@ -1,6 +1,6 @@
 # Contract Tests
 
-Contract testing framework for validating scip-php calls.json output.
+Contract testing framework for validating scip-php index.json output.
 
 ## Quick Start
 
@@ -12,7 +12,7 @@ bin/run.sh test
 bin/run.sh test --experimental
 
 # Run specific test by name
-bin/run.sh test --filter testOrderRepository
+bin/run.sh test --filter testInMemoryOrderRepository
 
 # Run specific test suite
 bin/run.sh test --suite smoke
@@ -25,7 +25,7 @@ bin/run.sh help
 ```
 
 The script handles everything:
-1. Generates fresh `calls.json` using scip-php on the host
+1. Generates fresh `index.json` using scip-php on the host
 2. Builds the Docker image (PHP 8.4)
 3. Runs PHPUnit tests or generates documentation in the container
 
@@ -76,7 +76,7 @@ Every test method MUST use the `#[ContractTest]` attribute for documentation gen
 use ContractTests\Attribute\ContractTest;
 
 #[ContractTest(
-    name: 'OrderRepository::save() $order',
+    name: 'InMemoryOrderRepository::save() $order',
     description: 'Verifies $order parameter has single value entry. Per spec, each parameter should have one value entry at declaration.',
     category: 'reference',
 )]
@@ -145,7 +145,7 @@ contract-tests/
     Chain/                      # Category 2 tests
     Argument/                   # Category 3 tests
   output/
-    calls.json                  # Generated index (gitignored)
+    index.json                  # Generated index (gitignored)
     junit.xml                   # PHPUnit results (gitignored)
 ```
 
@@ -172,18 +172,18 @@ class ParameterReferenceTest extends CallsContractTestCase
      * Per the spec, each parameter should have a single value entry at
      * declaration, with all usages referencing that entry.
      *
-     * Code reference: src/Repository/OrderRepository.php:26
+     * Code reference: src/Repository/InMemoryOrderRepository.php:26
      *   public function save(Order $order): Order
      */
     #[ContractTest(
-        name: 'OrderRepository::save() $order',
+        name: 'InMemoryOrderRepository::save() $order',
         description: 'Verifies $order parameter has single value entry',
         category: 'reference',
     )]
     public function testOrderRepositorySaveOrderParameter(): void
     {
         $result = $this->assertReferenceConsistency()
-            ->inMethod('App\Repository\OrderRepository', 'save')
+            ->inMethod('App\Repository\InMemoryOrderRepository', 'save')
             ->forParameter('$order')
             ->verify();
 

@@ -133,8 +133,8 @@ class OccurrenceTest extends CallsContractTestCase
             $filesWithReferences[$file] = true;
         }
 
-        // Order should be referenced in at least OrderRepository and OrderService
-        $expectedFiles = ['Repository/OrderRepository.php', 'Service/OrderService.php'];
+        // Order should be referenced in at least InMemoryOrderRepository and OrderService
+        $expectedFiles = ['Repository/InMemoryOrderRepository.php', 'Service/OrderService.php'];
         foreach ($expectedFiles as $expectedFile) {
             $found = false;
             foreach (array_keys($filesWithReferences) as $file) {
@@ -169,7 +169,7 @@ class OccurrenceTest extends CallsContractTestCase
 
         // Find reference occurrences for save method
         $occurrences = $this->scip()->occurrences()
-            ->symbolContains('OrderRepository#save()')
+            ->symbolContains('OrderRepositoryInterface#save()')
             ->isReference()
             ->inFile('Service/OrderService.php')
             ->all();
@@ -177,7 +177,7 @@ class OccurrenceTest extends CallsContractTestCase
         $this->assertGreaterThan(
             0,
             count($occurrences),
-            'Expected reference occurrence for OrderRepository.save() in OrderService'
+            'Expected reference occurrence for OrderRepositoryInterface.save() in OrderService'
         );
 
         // Verify one is near line 45

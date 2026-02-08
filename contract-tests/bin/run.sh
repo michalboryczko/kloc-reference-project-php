@@ -31,7 +31,7 @@ show_help() {
     echo "Examples:"
     echo "  bin/run.sh test"
     echo "  bin/run.sh test --experimental"
-    echo "  bin/run.sh test --filter testOrderRepository"
+    echo "  bin/run.sh test --filter testInMemoryOrderRepository"
     echo "  bin/run.sh test --suite smoke"
     echo "  bin/run.sh docs"
     echo "  bin/run.sh docs --format=json --output=tests.json"
@@ -62,11 +62,11 @@ generate_index() {
     # Run scip-php on the parent project (kloc-reference-project-php)
     eval "$scip_cmd"
 
-    # Check if calls.json was generated
-    if [[ -f "output/calls.json" ]]; then
-        echo -e "${GREEN}  calls.json generated${NC}"
+    # Check if index.json was generated
+    if [[ -f "output/index.json" ]]; then
+        echo -e "${GREEN}  index.json generated${NC}"
     else
-        echo -e "${RED}Error: scip-php did not generate calls.json${NC}"
+        echo -e "${RED}Error: scip-php did not generate index.json${NC}"
         exit 1
     fi
 
@@ -76,19 +76,6 @@ build_docker() {
     echo -e "${YELLOW}Building Docker image...${NC}"
     docker compose build --quiet
     echo -e "${GREEN}  Docker image ready${NC}"
-}
-
-convert_scip_to_json() {
-    # Check if index.scip was generated and convert to JSON
-    if [[ -f "output/index.scip" ]]; then
-        echo -e "${YELLOW}Converting SCIP to JSON...${NC}"
-        docker compose run --rm contract-tests scip print --json /app/contract-tests/output/index.scip > output/index.scip.json 2>/dev/null
-        if [[ -f "output/index.scip.json" && -s "output/index.scip.json" ]]; then
-            echo -e "${GREEN}  index.scip.json generated${NC}"
-        else
-            echo -e "${YELLOW}  Warning: index.scip.json generation failed (non-fatal)${NC}"
-        fi
-    fi
 }
 
 run_tests() {
@@ -104,7 +91,6 @@ run_tests() {
 
     generate_index "$experimental"
     build_docker
-    convert_scip_to_json
 
     echo -e "${YELLOW}Running tests...${NC}"
     echo ""
@@ -138,7 +124,6 @@ run_docs() {
 
     generate_index
     build_docker
-    convert_scip_to_json
 
     echo -e "${YELLOW}Generating documentation...${NC}"
     echo ""

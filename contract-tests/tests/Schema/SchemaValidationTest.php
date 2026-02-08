@@ -8,9 +8,9 @@ use ContractTests\Attribute\ContractTest;
 use ContractTests\CallsContractTestCase;
 
 /**
- * Tests for JSON schema validation of calls.json structure.
+ * Tests for JSON schema validation of index.json structure.
  *
- * Validates that the generated calls.json conforms to the expected schema
+ * Validates that the generated index.json conforms to the expected schema
  * defined in docs/reference/kloc-scip/calls-schema.json.
  */
 class SchemaValidationTest extends CallsContractTestCase

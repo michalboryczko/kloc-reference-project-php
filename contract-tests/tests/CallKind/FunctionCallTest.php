@@ -8,7 +8,7 @@ use ContractTests\Attribute\ContractTest;
 use ContractTests\CallsContractTestCase;
 
 /**
- * Tests for function call tracking in calls.json.
+ * Tests for function call tracking in index.json.
  *
  * Verifies that function calls (sprintf(), array_filter(), etc.)
  * are properly tracked with kind=function and correct argument binding.

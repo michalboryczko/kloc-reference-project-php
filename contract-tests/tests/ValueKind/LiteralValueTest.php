@@ -8,7 +8,7 @@ use ContractTests\Attribute\ContractTest;
 use ContractTests\CallsContractTestCase;
 
 /**
- * Tests for literal value tracking in calls.json.
+ * Tests for literal value tracking in index.json.
  *
  * Verifies that literal values (strings, integers, booleans, arrays)
  * are properly tracked in the values array with kind=literal.

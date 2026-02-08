@@ -195,7 +195,7 @@ final class ChainIntegrityAssertion
     {
         // Handle $this - look for parameter or special handling
         if ($this->startingVar === '$this') {
-            // $this is typically not an explicit value in calls.json
+            // $this is typically not an explicit value in index.json
             // Find the first call in the scope and work backwards
             return $this->findThisValue($scopePattern);
         }

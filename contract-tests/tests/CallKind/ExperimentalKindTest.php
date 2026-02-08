@@ -8,14 +8,14 @@ use ContractTests\Attribute\ContractTest;
 use ContractTests\CallsContractTestCase;
 
 /**
- * Tests for experimental kind filtering in calls.json.
+ * Tests for experimental kind filtering in index.json.
  *
  * Per the finish-mvp spec:
  * - Stable kinds (always generated): access, method, constructor, access_static, method_static
  * - Experimental kinds (require --experimental flag): function, access_array, coalesce, ternary, ternary_full, match
  *
  * NOTE: These tests validate the schema change. By default (without --experimental flag),
- * experimental kinds should NOT appear in calls.json.
+ * experimental kinds should NOT appear in index.json.
  *
  * Reference code:
  * - src/Service/OrderDisplayService.php (coalesce, ternary operators)
@@ -60,7 +60,7 @@ class ExperimentalKindTest extends CallsContractTestCase
 
     #[ContractTest(
         name: 'Stable Kinds Always Present',
-        description: 'Verifies stable kinds (access, method, constructor) are present in calls.json regardless of experimental flag. These kinds should always be generated.',
+        description: 'Verifies stable kinds (access, method, constructor) are present in index.json regardless of experimental flag. These kinds should always be generated.',
         category: 'callkind',
     )]
     public function testStableKindsAlwaysPresent(): void
@@ -72,14 +72,14 @@ class ExperimentalKindTest extends CallsContractTestCase
             $calls = $this->calls()->kind($kind)->all();
             $this->assertNotEmpty(
                 $calls,
-                sprintf('Stable kind "%s" should have at least one call in calls.json', $kind)
+                sprintf('Stable kind "%s" should have at least one call in index.json', $kind)
             );
         }
     }
 
     #[ContractTest(
         name: 'All Call Kinds Are Valid',
-        description: 'Verifies every call in calls.json has a kind that is either stable, experimental, or deprecated. No unknown kinds should exist.',
+        description: 'Verifies every call in index.json has a kind that is either stable, experimental, or deprecated. No unknown kinds should exist.',
         category: 'schema',
     )]
     public function testAllCallKindsAreValid(): void
@@ -91,7 +91,7 @@ class ExperimentalKindTest extends CallsContractTestCase
         );
 
         $allCalls = $this->calls()->all();
-        $this->assertNotEmpty($allCalls, 'Should have calls in calls.json');
+        $this->assertNotEmpty($allCalls, 'Should have calls in index.json');
 
         $invalidKinds = [];
         foreach ($allCalls as $call) {
@@ -120,7 +120,7 @@ class ExperimentalKindTest extends CallsContractTestCase
 
     #[ContractTest(
         name: 'No Function Calls Without Experimental Flag',
-        description: 'Verifies function calls (kind=function) are NOT present in default calls.json. Function kind is experimental and requires --experimental flag.',
+        description: 'Verifies function calls (kind=function) are NOT present in default index.json. Function kind is experimental and requires --experimental flag.',
         category: 'callkind',
     )]
     public function testNoFunctionCallsWithoutExperimentalFlag(): void
@@ -142,7 +142,7 @@ class ExperimentalKindTest extends CallsContractTestCase
 
     #[ContractTest(
         name: 'No Coalesce Operators Without Experimental Flag',
-        description: 'Verifies null coalesce operators (kind=coalesce) are NOT present in default calls.json. Coalesce kind is experimental and requires --experimental flag.',
+        description: 'Verifies null coalesce operators (kind=coalesce) are NOT present in default index.json. Coalesce kind is experimental and requires --experimental flag.',
         category: 'callkind',
     )]
     public function testNoCoalesceWithoutExperimentalFlag(): void
@@ -164,7 +164,7 @@ class ExperimentalKindTest extends CallsContractTestCase
 
     #[ContractTest(
         name: 'No Ternary Operators Without Experimental Flag',
-        description: 'Verifies ternary operators (kind=ternary, ternary_full) are NOT present in default calls.json. Ternary kinds are experimental and require --experimental flag.',
+        description: 'Verifies ternary operators (kind=ternary, ternary_full) are NOT present in default index.json. Ternary kinds are experimental and require --experimental flag.',
         category: 'callkind',
     )]
     public function testNoTernaryWithoutExperimentalFlag(): void
@@ -189,7 +189,7 @@ class ExperimentalKindTest extends CallsContractTestCase
 
     #[ContractTest(
         name: 'No Array Access Without Experimental Flag',
-        description: 'Verifies array access (kind=access_array) is NOT present in default calls.json. Array access kind is experimental and requires --experimental flag.',
+        description: 'Verifies array access (kind=access_array) is NOT present in default index.json. Array access kind is experimental and requires --experimental flag.',
         category: 'callkind',
     )]
     public function testNoArrayAccessWithoutExperimentalFlag(): void
@@ -211,7 +211,7 @@ class ExperimentalKindTest extends CallsContractTestCase
 
     #[ContractTest(
         name: 'No Match Expressions Without Experimental Flag',
-        description: 'Verifies match expressions (kind=match) are NOT present in default calls.json. Match kind is experimental and requires --experimental flag.',
+        description: 'Verifies match expressions (kind=match) are NOT present in default index.json. Match kind is experimental and requires --experimental flag.',
         category: 'callkind',
     )]
     public function testNoMatchWithoutExperimentalFlag(): void
@@ -233,7 +233,7 @@ class ExperimentalKindTest extends CallsContractTestCase
 
     #[ContractTest(
         name: 'No Experimental Kinds in Default Output',
-        description: 'Verifies NO experimental kinds exist in calls.json generated without --experimental flag. This is the comprehensive test for experimental filtering.',
+        description: 'Verifies NO experimental kinds exist in index.json generated without --experimental flag. This is the comprehensive test for experimental filtering.',
         category: 'callkind',
     )]
     public function testNoExperimentalKindsInDefaultOutput(): void
@@ -287,7 +287,7 @@ class ExperimentalKindTest extends CallsContractTestCase
 
     #[ContractTest(
         name: 'Experimental Kinds Present With Flag',
-        description: 'Verifies experimental kinds ARE present in calls.json when --experimental flag is used.',
+        description: 'Verifies experimental kinds ARE present in index.json when --experimental flag is used.',
         category: 'callkind',
         experimental: true,
     )]
@@ -315,7 +315,7 @@ class ExperimentalKindTest extends CallsContractTestCase
 
     #[ContractTest(
         name: 'No Deprecated Kinds Exist',
-        description: 'Verifies deprecated kinds (access_nullsafe, method_nullsafe) do not exist in calls.json. These have been replaced by access/method with union return types.',
+        description: 'Verifies deprecated kinds (access_nullsafe, method_nullsafe) do not exist in index.json. These have been replaced by access/method with union return types.',
         category: 'callkind',
     )]
     public function testNoDeprecatedKindsExist(): void
@@ -348,7 +348,7 @@ class ExperimentalKindTest extends CallsContractTestCase
 
     #[ContractTest(
         name: 'Kind Distribution Report',
-        description: 'Reports the distribution of call kinds in calls.json. This is an informational test that always passes but outputs statistics.',
+        description: 'Reports the distribution of call kinds in index.json. This is an informational test that always passes but outputs statistics.',
         category: 'callkind',
     )]
     public function testKindDistributionReport(): void
@@ -384,6 +384,6 @@ class ExperimentalKindTest extends CallsContractTestCase
         fwrite(STDERR, $report);
 
         // Always pass - this is informational
-        $this->assertNotEmpty($distribution, 'Should have some calls in calls.json');
+        $this->assertNotEmpty($distribution, 'Should have some calls in index.json');
     }
 }

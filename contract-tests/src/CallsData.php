@@ -8,10 +8,11 @@ use JsonException;
 use RuntimeException;
 
 /**
- * Immutable wrapper around parsed calls.json with indexed lookups.
+ * Immutable wrapper around parsed index.json calls/values data with indexed lookups.
  *
- * This class loads the calls.json file and provides efficient access to
+ * This class loads the unified index.json file and provides efficient access to
  * values and calls by their IDs, as well as raw array access for queries.
+ * The 'scip' key in the JSON is ignored; only 'version', 'calls', and 'values' are used.
  */
 final class CallsData
 {
@@ -43,14 +44,14 @@ final class CallsData
     {
         if (!file_exists($path)) {
             throw new RuntimeException(
-                sprintf('calls.json not found at: %s', $path)
+                sprintf('index.json not found at: %s', $path)
             );
         }
 
         $content = file_get_contents($path);
         if ($content === false) {
             throw new RuntimeException(
-                sprintf('Failed to read calls.json at: %s', $path)
+                sprintf('Failed to read index.json at: %s', $path)
             );
         }
 

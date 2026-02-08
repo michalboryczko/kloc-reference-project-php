@@ -10,7 +10,7 @@ use ContractTests\CallsData;
  * Scoped query helper for querying within a specific method.
  *
  * Usage:
- *   $scope = $this->inMethod('App\Repository\OrderRepository', 'save');
+ *   $scope = $this->inMethod('App\Repository\InMemoryOrderRepository', 'save');
  *   $params = $scope->values()->kind('parameter')->all();
  *   $calls = $scope->calls()->kind('method')->all();
  */

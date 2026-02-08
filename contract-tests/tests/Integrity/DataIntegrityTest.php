@@ -8,7 +8,7 @@ use ContractTests\Attribute\ContractTest;
 use ContractTests\CallsContractTestCase;
 
 /**
- * Tests for overall data integrity of the calls.json output.
+ * Tests for overall data integrity of the index.json output.
  */
 class DataIntegrityTest extends CallsContractTestCase
 {

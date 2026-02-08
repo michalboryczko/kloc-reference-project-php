@@ -53,7 +53,7 @@ class ReturnTypeTest extends CallsContractTestCase
     )]
     public function testOrderRepositoryFindByIdReturnsNullableOrder(): void
     {
-        // Code reference: src/Repository/OrderRepository.php:21
+        // Code reference: src/Repository/InMemoryOrderRepository.php:21
         // public function findById(int $id): ?Order
         $findByIdCalls = $this->calls()
             ->kind('method')
@@ -82,7 +82,7 @@ class ReturnTypeTest extends CallsContractTestCase
     )]
     public function testOrderRepositorySaveReturnsOrder(): void
     {
-        // Code reference: src/Repository/OrderRepository.php:26
+        // Code reference: src/Repository/InMemoryOrderRepository.php:26
         // public function save(Order $order): Order
         $saveCalls = $this->calls()
             ->kind('method')

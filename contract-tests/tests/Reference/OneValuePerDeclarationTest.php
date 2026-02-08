@@ -31,7 +31,7 @@ class OneValuePerDeclarationTest extends CallsContractTestCase
      * The $order parameter is used 8 times in the method body (lines 28, 31-35, 42, 44).
      * Per the spec, there should be only ONE parameter value entry.
      *
-     * Code reference: src/Repository/OrderRepository.php:26
+     * Code reference: src/Repository/InMemoryOrderRepository.php:26
      *   public function save(Order $order): Order
      */
     #[ContractTest(
@@ -42,7 +42,7 @@ class OneValuePerDeclarationTest extends CallsContractTestCase
     public function testOrderRepositorySaveOrderParameterSingleEntry(): void
     {
         // Query all parameter values with $order symbol in this method
-        $orderParams = $this->inMethod('App\Repository\OrderRepository', 'save')
+        $orderParams = $this->inMethod('App\Repository\InMemoryOrderRepository', 'save')
             ->values()
             ->kind('parameter')
             ->symbolContains('($order)')
@@ -81,7 +81,7 @@ class OneValuePerDeclarationTest extends CallsContractTestCase
      * Verifies that all property accesses on $order in save() share the same
      * receiver_value_id pointing to the parameter declaration.
      *
-     * Code reference: src/Repository/OrderRepository.php:31-35
+     * Code reference: src/Repository/InMemoryOrderRepository.php:31-35
      *   customerEmail: $order->customerEmail,
      *   productId: $order->productId,
      *   quantity: $order->quantity,
@@ -95,7 +95,7 @@ class OneValuePerDeclarationTest extends CallsContractTestCase
     )]
     public function testOrderRepositorySaveAllAccessesShareReceiver(): void
     {
-        $scope = $this->inMethod('App\Repository\OrderRepository', 'save');
+        $scope = $this->inMethod('App\Repository\InMemoryOrderRepository', 'save');
 
         // Get the single parameter value for $order
         $orderParam = $scope->values()
@@ -370,7 +370,7 @@ class OneValuePerDeclarationTest extends CallsContractTestCase
      * receiver for multiple property accesses, all should reference the
      * single declaration value.
      *
-     * Code reference: src/Repository/OrderRepository.php:31-35
+     * Code reference: src/Repository/InMemoryOrderRepository.php:31-35
      */
     #[ContractTest(
         name: 'OrderRepository::save() - Property Access Chain on $order',
@@ -379,7 +379,7 @@ class OneValuePerDeclarationTest extends CallsContractTestCase
     )]
     public function testOrderRepositoryPropertyAccessChainSharesReceiver(): void
     {
-        $scope = $this->inMethod('App\Repository\OrderRepository', 'save');
+        $scope = $this->inMethod('App\Repository\InMemoryOrderRepository', 'save');
 
         // Get property access calls on lines 31-35
         $chainedAccesses = [];
@@ -434,7 +434,7 @@ class OneValuePerDeclarationTest extends CallsContractTestCase
     )]
     public function testOrderRepositoryReceiverPointsToParameter(): void
     {
-        $scope = $this->inMethod('App\Repository\OrderRepository', 'save');
+        $scope = $this->inMethod('App\Repository\InMemoryOrderRepository', 'save');
 
         // Get the parameter value
         $paramValue = $scope->values()
@@ -491,7 +491,7 @@ class OneValuePerDeclarationTest extends CallsContractTestCase
     {
         $params = $this->values()
             ->kind('parameter')
-            ->inFile('OrderRepository.php')
+            ->inFile('InMemoryOrderRepository.php')
             ->all();
 
         $symbols = array_column($params, 'symbol');

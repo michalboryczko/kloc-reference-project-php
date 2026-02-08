@@ -19,7 +19,7 @@ use PHPUnit\Framework\TestCase;
  *
  * Usage:
  *   $this->assertReferenceConsistency()
- *       ->inMethod('App\Repository\OrderRepository', 'save')
+ *       ->inMethod('App\Repository\InMemoryOrderRepository', 'save')
  *       ->forParameter('$order')
  *       ->verify();
  */

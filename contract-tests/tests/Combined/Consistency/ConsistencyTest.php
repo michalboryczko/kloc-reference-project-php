@@ -8,28 +8,28 @@ use ContractTests\Attribute\ContractTest;
 use ContractTests\CallsContractTestCase;
 
 /**
- * Tests consistency between SCIP index and calls.json output.
+ * Tests consistency between SCIP index and index.json output.
  *
- * Validates that method calls and property accesses in calls.json have
+ * Validates that method calls and property accesses in index.json have
  * corresponding SCIP occurrences, and that symbol formats match.
  */
 class ConsistencyTest extends CallsContractTestCase
 {
     /**
-     * Verifies method calls in calls.json have SCIP occurrences.
+     * Verifies method calls in index.json have SCIP occurrences.
      *
-     * Expected: For each method call in calls.json, a corresponding SCIP reference exists.
+     * Expected: For each method call in index.json, a corresponding SCIP reference exists.
      */
     #[ContractTest(
         name: 'Method calls have SCIP occurrences',
-        description: 'Verifies method calls in calls.json (kind=method) have corresponding reference occurrences in SCIP.',
+        description: 'Verifies method calls in index.json (kind=method) have corresponding reference occurrences in SCIP.',
         category: 'combined',
     )]
     public function testMethodCallsHaveScipOccurrences(): void
     {
         $this->requireScipData();
 
-        // Get method calls from calls.json
+        // Get method calls from index.json
         $methodCalls = $this->calls()->kind('method')->all();
 
         $this->assertGreaterThan(0, count($methodCalls), 'Expected at least one method call');
@@ -81,20 +81,20 @@ class ConsistencyTest extends CallsContractTestCase
     }
 
     /**
-     * Verifies property accesses in calls.json have SCIP occurrences.
+     * Verifies property accesses in index.json have SCIP occurrences.
      *
-     * Expected: For each property access in calls.json, a corresponding SCIP reference exists.
+     * Expected: For each property access in index.json, a corresponding SCIP reference exists.
      */
     #[ContractTest(
         name: 'Property accesses have SCIP occurrences',
-        description: 'Verifies property accesses in calls.json (kind=access) have corresponding reference occurrences in SCIP.',
+        description: 'Verifies property accesses in index.json (kind=access) have corresponding reference occurrences in SCIP.',
         category: 'combined',
     )]
     public function testPropertyAccessesHaveScipOccurrences(): void
     {
         $this->requireScipData();
 
-        // Get property accesses from calls.json
+        // Get property accesses from index.json
         $accesses = $this->calls()->kind('access')->all();
 
         $this->assertGreaterThan(0, count($accesses), 'Expected at least one property access');
@@ -146,23 +146,23 @@ class ConsistencyTest extends CallsContractTestCase
     }
 
     /**
-     * Verifies constructor calls have both calls.json and SCIP entries.
+     * Verifies constructor calls have both index.json and SCIP entries.
      *
      * Code reference: src/Service/OrderService.php:31
      *   $order = new Order(...)
      *
-     * Expected: Both calls.json (kind=constructor) and SCIP (reference) capture this.
+     * Expected: Both index.json (kind=constructor) and SCIP (reference) capture this.
      */
     #[ContractTest(
         name: 'Constructor calls have both entries',
-        description: 'Verifies new Order() appears in both calls.json (kind=constructor) and SCIP (reference occurrence).',
+        description: 'Verifies new Order() appears in both index.json (kind=constructor) and SCIP (reference occurrence).',
         category: 'combined',
     )]
     public function testConstructorCallsHaveBothEntries(): void
     {
         $this->requireScipData();
 
-        // Find Order constructor call in calls.json
+        // Find Order constructor call in index.json
         $constructorCalls = $this->calls()
             ->kind('constructor')
             ->calleeContains('Order')
@@ -171,7 +171,7 @@ class ConsistencyTest extends CallsContractTestCase
         $this->assertGreaterThan(
             0,
             count($constructorCalls),
-            'Expected at least one Order constructor call in calls.json'
+            'Expected at least one Order constructor call in index.json'
         );
 
         // Find Order class reference in SCIP near constructor call
@@ -200,20 +200,20 @@ class ConsistencyTest extends CallsContractTestCase
     }
 
     /**
-     * Verifies SCIP symbols match calls.json callee symbols.
+     * Verifies SCIP symbols match index.json callee symbols.
      *
-     * Expected: Symbol format in calls.json callee field is compatible with SCIP symbols.
+     * Expected: Symbol format in index.json callee field is compatible with SCIP symbols.
      */
     #[ContractTest(
         name: 'Symbol formats are compatible',
-        description: 'Verifies symbol formats between calls.json callee and SCIP symbols are compatible after normalization.',
+        description: 'Verifies symbol formats between index.json callee and SCIP symbols are compatible after normalization.',
         category: 'combined',
     )]
     public function testSymbolFormatsAreCompatible(): void
     {
         $this->requireScipData();
 
-        // Get a sample method call from calls.json
+        // Get a sample method call from index.json
         $methodCall = $this->calls()
             ->kind('method')
             ->calleeContains('save()')
@@ -252,20 +252,20 @@ class ConsistencyTest extends CallsContractTestCase
     }
 
     /**
-     * Verifies type consistency between SCIP and calls.json.
+     * Verifies type consistency between SCIP and index.json.
      *
-     * Expected: Value types in calls.json that are project classes correspond to SCIP symbols.
+     * Expected: Value types in index.json that are project classes correspond to SCIP symbols.
      */
     #[ContractTest(
         name: 'Types correspond to SCIP symbols',
-        description: 'Verifies value types in calls.json reference valid SCIP class symbols for project classes.',
+        description: 'Verifies value types in index.json reference valid SCIP class symbols for project classes.',
         category: 'combined',
     )]
     public function testTypesCorrespondToScipSymbols(): void
     {
         $this->requireScipData();
 
-        // Get values with types from calls.json
+        // Get values with types from index.json
         $values = $this->values()->kind('result')->all();
 
         $typesToCheck = [];
@@ -334,13 +334,13 @@ class ConsistencyTest extends CallsContractTestCase
     }
 
     /**
-     * Verifies both SCIP and calls.json cover the same source files.
+     * Verifies both SCIP and index.json cover the same source files.
      *
-     * Expected: Source files indexed in calls.json are also in SCIP.
+     * Expected: Source files indexed in index.json are also in SCIP.
      */
     #[ContractTest(
         name: 'Source files are consistently indexed',
-        description: 'Verifies the same source files appear in both calls.json scope and SCIP documents.',
+        description: 'Verifies the same source files appear in both index.json scope and SCIP documents.',
         category: 'combined',
     )]
     public function testSourceFilesAreConsistentlyIndexed(): void
@@ -351,7 +351,7 @@ class ConsistencyTest extends CallsContractTestCase
         $scipFiles = $this->scipData()->filePaths();
         $this->assertGreaterThan(0, count($scipFiles));
 
-        // Get scope files from calls.json (unique caller scopes)
+        // Get scope files from index.json (unique caller scopes)
         $calls = $this->calls()->all();
         $callsFiles = [];
         foreach ($calls as $call) {
@@ -387,7 +387,7 @@ class ConsistencyTest extends CallsContractTestCase
         $this->assertGreaterThan(
             0,
             $overlap,
-            'Expected some overlap between files indexed in calls.json and SCIP'
+            'Expected some overlap between files indexed in index.json and SCIP'
         );
     }
 }

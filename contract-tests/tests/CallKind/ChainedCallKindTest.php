@@ -140,7 +140,7 @@ class ChainedCallKindTest extends CallsContractTestCase
     /**
      * Verifies self::$nextId++ at line 30 has kind=access_static, not constructor.
      *
-     * Code reference: src/Repository/OrderRepository.php:30
+     * Code reference: src/Repository/InMemoryOrderRepository.php:30
      *   id: self::$nextId++,
      *
      * Issue 2: The static property access was incorrectly classified with
@@ -180,7 +180,7 @@ class ChainedCallKindTest extends CallsContractTestCase
      * Verifies new Order(...) at line 29 has kind=constructor, distinct from
      * the static property access on the next line.
      *
-     * Code reference: src/Repository/OrderRepository.php:29
+     * Code reference: src/Repository/InMemoryOrderRepository.php:29
      *   $newOrder = new Order(
      */
     #[ContractTest(

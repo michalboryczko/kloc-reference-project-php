@@ -8,7 +8,7 @@ use ContractTests\CallsData;
 use PHPUnit\Framework\Assert;
 
 /**
- * Fluent query builder for filtering values from calls.json.
+ * Fluent query builder for filtering values from index.json.
  */
 final class ValueQuery
 {
@@ -58,7 +58,7 @@ final class ValueQuery
     /**
      * Filter by symbol pattern (supports * wildcard).
      *
-     * @example ->symbolMatches('*OrderRepository#save().($order)')
+     * @example ->symbolMatches('*InMemoryOrderRepository#save().($order)')
      */
     public function symbolMatches(string $pattern): self
     {
@@ -78,7 +78,7 @@ final class ValueQuery
     /**
      * Filter by caller pattern (method scope).
      *
-     * @example ->inCaller('*OrderRepository#save().*')
+     * @example ->inCaller('*InMemoryOrderRepository#save().*')
      */
     public function inCaller(string $pattern): self
     {

@@ -8,7 +8,7 @@ use ContractTests\CallsData;
 use PHPUnit\Framework\Assert;
 
 /**
- * Fluent query builder for filtering calls from calls.json.
+ * Fluent query builder for filtering calls from index.json.
  */
 final class CallQuery
 {
@@ -81,7 +81,7 @@ final class CallQuery
     /**
      * Filter by caller pattern (where the call is made).
      *
-     * @example ->callerMatches('*OrderRepository#save().*')
+     * @example ->callerMatches('*InMemoryOrderRepository#save().*')
      */
     public function callerMatches(string $pattern): self
     {

@@ -10,7 +10,7 @@ use ContractTests\CallsContractTestCase;
 /**
  * Contract tests for Usage Flow Tracking spec.
  *
- * These tests validate that calls.json supports the requirements from
+ * These tests validate that index.json supports the requirements from
  * docs/specs/usage-flow-tracking.md for tracking:
  * - Access chains (TC3)
  * - Receiver information (TC2)
@@ -34,7 +34,7 @@ class UsageFlowTrackingTest extends CallsContractTestCase
     public function testTC1PropertyTypeHintCreatesTypedValue(): void
     {
         // Code reference: src/Service/OrderService.php:20
-        // private OrderRepository $orderRepository
+        // private OrderRepositoryInterface $orderRepository
 
         $param = $this->inMethod('App\Service\OrderService', '__construct')
             ->values()
@@ -46,9 +46,9 @@ class UsageFlowTrackingTest extends CallsContractTestCase
         $this->assertArrayHasKey('type', $param, 'Parameter should have type field');
         $this->assertNotNull($param['type'], 'Parameter type should not be null');
         $this->assertStringContainsString(
-            'OrderRepository',
+            'OrderRepositoryInterface',
             $param['type'] ?? '',
-            'Parameter type should contain OrderRepository'
+            'Parameter type should contain OrderRepositoryInterface'
         );
     }
 
@@ -693,7 +693,7 @@ class UsageFlowTrackingTest extends CallsContractTestCase
 
     #[ContractTest(
         name: 'Summary: All TC Requirements Traceable',
-        description: 'Summary test verifying the spec requirements are structurally supported in calls.json.',
+        description: 'Summary test verifying the spec requirements are structurally supported in index.json.',
         category: 'smoke',
     )]
     public function testSummaryAllRequirementsTraceable(): void

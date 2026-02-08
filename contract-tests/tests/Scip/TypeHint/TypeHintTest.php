@@ -19,22 +19,22 @@ class TypeHintTest extends CallsContractTestCase
      * Verifies that property type hints create reference occurrences.
      *
      * Code reference: src/Service/OrderService.php:20
-     *   private OrderRepository $orderRepository,
+     *   private OrderRepositoryInterface $orderRepository,
      *
-     * Expected: SCIP contains a reference occurrence for OrderRepository at the type hint.
+     * Expected: SCIP contains a reference occurrence for OrderRepositoryInterface at the type hint.
      */
     #[ContractTest(
         name: 'Property type hint creates SCIP occurrence',
-        description: 'Verifies typed properties create reference occurrences in SCIP index. Tests OrderService.$orderRepository typed as OrderRepository.',
+        description: 'Verifies typed properties create reference occurrences in SCIP index. Tests OrderService.$orderRepository typed as OrderRepositoryInterface.',
         category: 'scip',
     )]
     public function testPropertyTypeHintCreatesOccurrence(): void
     {
         $this->requireScipData();
 
-        // Find reference occurrences for OrderRepository class
+        // Find reference occurrences for OrderRepositoryInterface
         $occurrences = $this->scip()->occurrences()
-            ->symbolContains('OrderRepository#')
+            ->symbolContains('OrderRepositoryInterface#')
             ->isReference()
             ->inFile('Service/OrderService.php')
             ->all();
@@ -43,7 +43,7 @@ class TypeHintTest extends CallsContractTestCase
         $this->assertGreaterThan(
             0,
             count($occurrences),
-            'Expected at least one reference occurrence for OrderRepository in OrderService'
+            'Expected at least one reference occurrence for OrderRepositoryInterface in OrderService'
         );
 
         // Verify at least one occurrence is near the constructor (lines 19-24)
@@ -58,7 +58,7 @@ class TypeHintTest extends CallsContractTestCase
 
         $this->assertTrue(
             $foundInConstructor,
-            'Expected OrderRepository reference in constructor parameter type hint (lines 19-25)'
+            'Expected OrderRepositoryInterface reference in constructor parameter type hint (lines 19-25)'
         );
     }
 
@@ -96,7 +96,7 @@ class TypeHintTest extends CallsContractTestCase
     /**
      * Verifies that parameter type hints create reference occurrences.
      *
-     * Code reference: src/Repository/OrderRepository.php:26
+     * Code reference: src/Repository/InMemoryOrderRepository.php:26
      *   public function save(Order $order): Order
      *
      * Expected: SCIP contains a reference for Order at parameter position.
@@ -114,7 +114,7 @@ class TypeHintTest extends CallsContractTestCase
         $occurrences = $this->scip()->occurrences()
             ->symbolContains('Order#')
             ->isReference()
-            ->inFile('Repository/OrderRepository.php')
+            ->inFile('Repository/InMemoryOrderRepository.php')
             ->all();
 
         // Filter to Order entity, not OrderRepository
@@ -134,7 +134,7 @@ class TypeHintTest extends CallsContractTestCase
     /**
      * Verifies that return type hints create reference occurrences.
      *
-     * Code reference: src/Repository/OrderRepository.php:26
+     * Code reference: src/Repository/InMemoryOrderRepository.php:26
      *   public function save(Order $order): Order
      *
      * Expected: SCIP contains a reference for Order at return type position.
@@ -153,7 +153,7 @@ class TypeHintTest extends CallsContractTestCase
         $occurrences = $this->scip()->occurrences()
             ->symbolContains('Entity/Order#')
             ->isReference()
-            ->inFile('Repository/OrderRepository.php')
+            ->inFile('Repository/InMemoryOrderRepository.php')
             ->all();
 
         // Should have at least 2 references (one for param, one for return, possibly more for body)
@@ -211,7 +211,7 @@ class TypeHintTest extends CallsContractTestCase
     /**
      * Verifies nullable type hints are tracked.
      *
-     * Code reference: src/Repository/OrderRepository.php:21
+     * Code reference: src/Repository/InMemoryOrderRepository.php:21
      *   public function findById(int $id): ?Order
      *
      * Expected: Order reference exists for nullable return type.
@@ -229,7 +229,7 @@ class TypeHintTest extends CallsContractTestCase
         $occurrences = $this->scip()->occurrences()
             ->symbolContains('Entity/Order#')
             ->isReference()
-            ->inFile('Repository/OrderRepository.php')
+            ->inFile('Repository/InMemoryOrderRepository.php')
             ->betweenLines(21, 24)
             ->all();
 
