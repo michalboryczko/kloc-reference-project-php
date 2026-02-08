@@ -174,6 +174,7 @@ function extractTestMetadata(): array
                     'codeRef' => $dynamicCodeRef,
                     'category' => getCategoryFromClass($className),
                     'declaredStatus' => 'active',
+                    'experimental' => false,
                 ];
             } else {
                 $attr = $attributes[0]->newInstance();
@@ -183,6 +184,7 @@ function extractTestMetadata(): array
                     'codeRef' => $dynamicCodeRef,
                     'category' => $attr->category ?: getCategoryFromClass($className),
                     'declaredStatus' => $attr->status,
+                    'experimental' => $attr->experimental ?? false,
                 ];
             }
         }
@@ -205,6 +207,7 @@ function mergeResultsWithMetadata(array $metadata, array $results): array
             'codeRef' => $meta['codeRef'],
             'category' => $meta['category'],
             'declaredStatus' => $meta['declaredStatus'],
+            'experimental' => $meta['experimental'] ?? false,
             'executionStatus' => $result['status'],
             'executionTime' => $result['time'],
             'message' => $result['message'],
@@ -254,11 +257,14 @@ function outputMarkdown(array $tests): string
     $out .= "Generated: " . date('Y-m-d H:i:s') . "\n\n";
 
     // Summary
-    $summary = ['passed' => 0, 'failed' => 0, 'skipped' => 0, 'error' => 0];
+    $summary = ['passed' => 0, 'failed' => 0, 'skipped' => 0, 'error' => 0, 'experimental' => 0];
     foreach ($tests as $test) {
         $status = $test['executionStatus'];
         if (isset($summary[$status])) {
             $summary[$status]++;
+        }
+        if ($test['experimental'] ?? false) {
+            $summary['experimental']++;
         }
     }
 
@@ -269,6 +275,7 @@ function outputMarkdown(array $tests): string
     $out .= "| ❌ Failed | {$summary['failed']} |\n";
     $out .= "| ⏭️ Skipped | {$summary['skipped']} |\n";
     $out .= "| 💥 Error | {$summary['error']} |\n";
+    $out .= "| 🧪 Experimental | {$summary['experimental']} |\n";
     $out .= "| **Total** | **" . count($tests) . "** |\n\n";
 
     $currentCategory = '';
@@ -283,8 +290,9 @@ function outputMarkdown(array $tests): string
 
         $emoji = getStatusEmoji($test['executionStatus']);
         $codeRef = $test['codeRef'] ?: '-';
+        $experimentalBadge = ($test['experimental'] ?? false) ? ' 🧪' : '';
 
-        $out .= "| {$emoji} | {$test['name']} | {$test['description']} | `{$codeRef}` |\n";
+        $out .= "| {$emoji}{$experimentalBadge} | {$test['name']} | {$test['description']} | `{$codeRef}` |\n";
     }
 
     // Failed tests details

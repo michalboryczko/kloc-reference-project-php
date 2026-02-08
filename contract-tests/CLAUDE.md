@@ -8,6 +8,9 @@ Contract testing framework for validating scip-php calls.json output.
 # Run all tests (generates fresh index + runs in Docker)
 bin/run.sh test
 
+# Run with experimental call kinds (function, access_array, operators)
+bin/run.sh test --experimental
+
 # Run specific test by name
 bin/run.sh test --filter testOrderRepository
 
@@ -29,13 +32,14 @@ The script handles everything:
 ## Prerequisites
 
 - Docker and docker-compose
-- scip-php binary built at `../../scip-php/build/scip-php`
+- scip-php Docker image built: `cd ../../scip-php && ./build/build.sh`
 
 ## Commands Reference
 
 | Command | Description |
 |---------|-------------|
 | `bin/run.sh test` | Run all tests with fresh index |
+| `bin/run.sh test --experimental` | Run with experimental call kinds enabled |
 | `bin/run.sh test --filter <name>` | Run specific test by name/pattern |
 | `bin/run.sh test --suite <name>` | Run specific test suite |
 | `bin/run.sh docs` | Generate markdown documentation |
@@ -44,6 +48,25 @@ The script handles everything:
 | `bin/run.sh docs --output=FILE` | Write documentation to file |
 
 Test suites: `smoke`, `integrity`, `reference`, `chain`, `argument`
+
+## Call Kinds
+
+The indexer produces two categories of call kinds:
+
+**Stable (always generated):**
+- `access` - Property access (`$obj->property`)
+- `method` - Method call (`$obj->method()`)
+- `constructor` - Object instantiation (`new Foo()`)
+- `access_static` - Static property access (`Foo::$property`)
+- `method_static` - Static method call (`Foo::method()`)
+
+**Experimental (require `--experimental` flag):**
+- `function` - Function call (`sprintf()`)
+- `access_array` - Array access (`$arr['key']`)
+- `coalesce` - Null coalesce operator (`$a ?? $b`)
+- `ternary` - Short ternary (`$a ?: $b`)
+- `ternary_full` - Full ternary (`$a ? $b : $c`)
+- `match` - Match expression (`match($x) { ... }`)
 
 ## ContractTest Attribute
 
@@ -64,8 +87,9 @@ public function testOrderRepositorySaveOrderParameter(): void
 |-----------|------|----------|-------------|
 | `name` | string | Yes | Human-readable test name shown in docs |
 | `description` | string | Yes | What the test verifies (detailed) |
-| `category` | string | No | Test category: `smoke`, `integrity`, `reference`, `chain`, `argument` (auto-detected from class if omitted) |
+| `category` | string | No | Test category: `smoke`, `integrity`, `reference`, `chain`, `argument`, `callkind`, `operator` (auto-detected from class if omitted) |
 | `status` | string | No | `active` (default), `skipped`, `pending` |
+| `experimental` | bool | No | If `true`, test only runs with `--experimental` flag |
 
 **Note**: Code reference (`ClassName::methodName`) is generated automatically via reflection.
 
@@ -93,12 +117,6 @@ Generated documentation includes:
 - **Writing Tests**: `docs/reference/kloc-scip/contract-tests/writing-tests.md`
 - **Calls Schema**: `docs/reference/kloc-scip/calls-and-data-flow.md`
 
-## Environment Variables
-
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `SCIP_PHP_BINARY` | `../../scip-php/build/scip-php` | Path to scip-php binary (host) |
-
 ## Directory Structure
 
 ```
@@ -108,7 +126,7 @@ contract-tests/
     generate-docs.php       # Generate test documentation (internal)
   src/
     Attribute/
-      ContractTest.php      # Test metadata attribute
+      ContractTest.php          # Test metadata attribute
     CallsContractTestCase.php   # Base test class
     CallsData.php               # JSON wrapper
     Query/
