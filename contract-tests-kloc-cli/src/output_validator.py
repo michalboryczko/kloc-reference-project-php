@@ -5,6 +5,8 @@ Works against a sot.json fixture file on disk.
 """
 
 import json
+import os
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -23,25 +25,42 @@ class CliError(Exception):
 class OutputValidator:
     """Runs kloc-cli commands and validates JSON output.
 
-    Uses the Python module directly (python -m src.cli) to avoid
-    requiring a compiled binary. Runs from the kloc-cli directory
-    so module resolution works.
+    Supports two execution modes:
+    - Installed binary: uses 'kloc-cli' from PATH (preferred in Docker)
+    - Python module: uses 'python -m src.cli' from kloc-cli directory (local dev)
     """
 
-    def __init__(self, sot_path: str | Path, cli_module: str = "src.cli",
-                 cli_dir: str | Path | None = None, python_exe: str | None = None):
+    def __init__(self, sot_path: str | Path, cli_dir: str | Path | None = None,
+                 python_exe: str | None = None):
         """Initialize with path to sot.json fixture.
 
         Args:
             sot_path: Path to the sot.json file.
-            cli_module: Python module path for the CLI (default: src.cli).
-            cli_dir: Directory containing the CLI module (cwd for subprocess).
-            python_exe: Python executable to use (default: same as current).
+            cli_dir: Directory containing the CLI source (cwd for module mode).
+            python_exe: Python executable to use for module mode.
         """
         self.sot_path = str(sot_path)
-        self.cli_module = cli_module
         self.cli_dir = str(cli_dir) if cli_dir else None
         self.python_exe = python_exe or sys.executable
+
+        # Prefer installed binary; fall back to python -m src.cli
+        self._use_binary = shutil.which("kloc-cli") is not None
+
+    def _build_cmd(self, cmd: str, *args: str) -> list[str]:
+        """Build the command list for subprocess."""
+        if self._use_binary:
+            return ["kloc-cli", cmd, "--sot", self.sot_path, *args]
+        return [self.python_exe, "-m", "src.cli", cmd, "--sot", self.sot_path, *args]
+
+    def _build_help_cmd(self, cmd: str = "") -> list[str]:
+        """Build the --help command list."""
+        if self._use_binary:
+            if cmd:
+                return ["kloc-cli", cmd, "--help"]
+            return ["kloc-cli", "--help"]
+        if cmd:
+            return [self.python_exe, "-m", "src.cli", cmd, "--help"]
+        return [self.python_exe, "-m", "src.cli", "--help"]
 
     def _run(self, cmd: str, *args: str, expect_error: bool = False) -> subprocess.CompletedProcess:
         """Run a kloc-cli command.
@@ -54,18 +73,13 @@ class OutputValidator:
         Returns:
             CompletedProcess result
         """
-        full_cmd = [
-            self.python_exe, "-m", self.cli_module,
-            cmd,
-            "--sot", self.sot_path,
-            *args,
-        ]
+        full_cmd = self._build_cmd(cmd, *args)
         result = subprocess.run(
             full_cmd,
             capture_output=True,
             text=True,
             timeout=30,
-            cwd=self.cli_dir,
+            cwd=self.cli_dir if not self._use_binary else None,
         )
         if not expect_error and result.returncode != 0:
             raise CliError(result.returncode, result.stderr, full_cmd)
@@ -103,12 +117,13 @@ class OutputValidator:
         Returns:
             Help text (stdout + stderr since typer writes help to stdout)
         """
-        if cmd:
-            full_cmd = [self.python_exe, "-m", self.cli_module, cmd, "--help"]
-        else:
-            full_cmd = [self.python_exe, "-m", self.cli_module, "--help"]
+        full_cmd = self._build_help_cmd(cmd)
         result = subprocess.run(
-            full_cmd, capture_output=True, text=True, timeout=10, cwd=self.cli_dir
+            full_cmd,
+            capture_output=True,
+            text=True,
+            timeout=10,
+            cwd=self.cli_dir if not self._use_binary else None,
         )
         return result.stdout + result.stderr
 
@@ -155,15 +170,18 @@ class OutputValidator:
     @staticmethod
     def expect_edge(result: dict, source: str | None = None, target: str | None = None,
                     edge_type: str | None = None) -> dict | None:
-        """Find an edge in result by matching criteria.
+        """Find an edge-like entry in result by matching criteria.
 
-        Searches in tree children/used_by/uses entries for edge-like patterns.
+        kloc-cli outputs tree structures, not raw edges. This searches
+        tree entries where the parent-child relationship implies an edge.
+        The 'source' is matched against parent context, while 'target'
+        is matched against the entry's FQN.
 
         Args:
             result: JSON result from kloc-cli
-            source: Expected source FQN (substring)
-            target: Expected target FQN (substring)
-            edge_type: Expected edge type
+            source: Expected source FQN (substring match against parent or target context)
+            target: Expected target FQN (substring match against entry fqn)
+            edge_type: Expected edge type (matched against entry 'kind' or 'type' field)
 
         Returns:
             Matching entry dict or None
@@ -172,6 +190,11 @@ class OutputValidator:
         for entry in entries:
             if target and target not in entry.get("fqn", ""):
                 continue
+            if source and source not in entry.get("fqn", ""):
+                # Also check if source matches the target context (for context results)
+                target_fqn = result.get("target", {}).get("fqn", "")
+                if source not in target_fqn:
+                    continue
             if edge_type and entry.get("type") != edge_type:
                 continue
             return entry

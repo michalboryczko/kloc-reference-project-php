@@ -3,8 +3,5 @@ services:
     build:
       context: ..
       dockerfile: contract-tests-kloc-cli/Dockerfile
-    volumes:
-      - .:/app/contract-tests-kloc-cli
-      - ../kloc-cli:/app/kloc-cli
     working_dir: /app/contract-tests-kloc-cli
     command: ["pytest", "-v", "--tb=short"]

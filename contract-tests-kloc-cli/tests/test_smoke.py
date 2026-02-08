@@ -66,6 +66,16 @@ def test_json_output_valid(cli: OutputValidator):
     assert "fqn" in result or "candidates" in result or "error" in result
 
 
+def _make_validator(sot_path) -> OutputValidator:
+    """Create an OutputValidator with the correct kloc-cli directory."""
+    kloc_cli_dir = Path(__file__).parent.parent.parent.parent / "kloc-cli"
+    if not kloc_cli_dir.exists():
+        kloc_cli_dir = Path("/app/kloc-cli")
+    venv_python = kloc_cli_dir / ".venv" / "bin" / "python"
+    python_exe = str(venv_python) if venv_python.exists() else sys.executable
+    return OutputValidator(sot_path=sot_path, cli_dir=str(kloc_cli_dir), python_exe=python_exe)
+
+
 @contract_test(
     name="Missing sot file produces error",
     description="Verifies that pointing to a non-existent sot file produces an error, not a crash",
@@ -75,7 +85,7 @@ def test_json_output_valid(cli: OutputValidator):
 def test_missing_sot_error(tmp_path):
     """Missing sot file should produce a meaningful error, not a crash."""
     bad_path = tmp_path / "nonexistent.json"
-    validator = OutputValidator(sot_path=bad_path)
+    validator = _make_validator(bad_path)
     result = validator.run_raw("resolve", "Foo", expect_error=True)
     assert result.returncode != 0
     # Should mention the file not being found
@@ -93,6 +103,6 @@ def test_invalid_sot_json(tmp_path):
     """Malformed sot.json should produce a parse error."""
     bad_sot = tmp_path / "bad.json"
     bad_sot.write_text("{invalid json content")
-    validator = OutputValidator(sot_path=bad_sot)
+    validator = _make_validator(bad_sot)
     result = validator.run_raw("resolve", "Foo", expect_error=True)
     assert result.returncode != 0

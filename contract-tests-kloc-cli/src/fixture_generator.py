@@ -267,6 +267,108 @@ class SoTFixtureBuilder:
         self._node_ids[fqn] = node_id
         return node_id
 
+    def add_value(
+        self,
+        fqn: str,
+        file: str,
+        value_kind: str = "parameter",
+        type_symbol: str | None = None,
+        start_line: int = 10,
+    ) -> str:
+        """Add a Value node (sot.json v2.0). Returns the node ID.
+
+        Args:
+            fqn: FQN for the value (e.g., 'App\\Foo::bar()::$param')
+            file: Source file path
+            value_kind: One of 'parameter', 'local', 'result', 'literal', 'constant'
+            type_symbol: SCIP symbol of the value's type (optional)
+            start_line: Source line number
+        """
+        name = fqn.split("::")[-1] if "::" in fqn else fqn.split("\\")[-1]
+        node_id = _generate_id("val", fqn)
+        node = {
+            "id": node_id,
+            "kind": "Value",
+            "name": name,
+            "fqn": fqn,
+            "symbol": f"val:{fqn}",
+            "file": file,
+            "range": {
+                "start_line": start_line,
+                "start_col": 0,
+                "end_line": start_line,
+                "end_col": 20,
+            },
+            "documentation": [],
+            "value_kind": value_kind,
+        }
+        if type_symbol:
+            node["type_symbol"] = type_symbol
+        self._nodes.append(node)
+        self._node_ids[fqn] = node_id
+        return node_id
+
+    def add_call(
+        self,
+        fqn: str,
+        file: str,
+        call_kind: str = "method",
+        start_line: int = 12,
+    ) -> str:
+        """Add a Call node (sot.json v2.0). Returns the node ID.
+
+        Args:
+            fqn: FQN for the call site (e.g., 'App\\Foo::bar()@12:4')
+            file: Source file path
+            call_kind: One of 'method', 'method_static', 'constructor',
+                       'access', 'access_static', 'function'
+            start_line: Source line number
+        """
+        name = fqn.split("::")[-1] if "::" in fqn else fqn.split("\\")[-1]
+        node_id = _generate_id("call", fqn)
+        self._nodes.append({
+            "id": node_id,
+            "kind": "Call",
+            "name": name,
+            "fqn": fqn,
+            "symbol": f"call:{fqn}",
+            "file": file,
+            "range": {
+                "start_line": start_line,
+                "start_col": 0,
+                "end_line": start_line,
+                "end_col": 30,
+            },
+            "documentation": [],
+            "call_kind": call_kind,
+        })
+        self._node_ids[fqn] = node_id
+        return node_id
+
+    def add_calls_edge(self, call_id: str, target_id: str) -> None:
+        """Add a calls edge (Call -> Method/Function)."""
+        self.add_edge("calls", call_id, target_id)
+
+    def add_receiver_edge(self, call_id: str, value_id: str) -> None:
+        """Add a receiver edge (Call -> Value)."""
+        self.add_edge("receiver", call_id, value_id)
+
+    def add_argument_edge(self, call_id: str, value_id: str, position: int = 0) -> None:
+        """Add an argument edge (Call -> Value) with position."""
+        self.add_edge("argument", call_id, value_id, position=position)
+
+    def add_produces_edge(self, call_id: str, value_id: str) -> None:
+        """Add a produces edge (Call -> Value result)."""
+        self.add_edge("produces", call_id, value_id)
+
+    def add_assigned_from_edge(self, target_value_id: str, source_value_id: str) -> None:
+        """Add an assigned_from edge (Value -> Value)."""
+        self.add_edge("assigned_from", target_value_id, source_value_id)
+
+    def add_type_of_edge(self, value_id: str, type_id: str) -> None:
+        """Add a type_of edge (Value -> Class/Interface)."""
+        self.add_edge("type_of", value_id, type_id)
+
     def add_edge(self, edge_type: str, source_id: str, target_id: str, **kwargs) -> None:
         """Add an edge between two nodes.
 

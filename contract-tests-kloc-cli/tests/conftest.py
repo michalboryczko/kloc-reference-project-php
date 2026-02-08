@@ -200,10 +200,10 @@ def reference_sot_path(reference_sot_data, tmp_path_factory) -> Path:
 def cli(reference_sot_path) -> OutputValidator:
     """Return an OutputValidator configured with the reference sot.json.
 
-    The CLI module path points to kloc-cli's src.cli module.
-    Runs subprocess from the kloc-cli directory so module resolution works.
+    In Docker: uses the installed 'kloc-cli' binary (no module path needed).
+    Locally: falls back to 'python -m src.cli' from the kloc-cli directory.
     """
-    # Determine the kloc-cli directory
+    # Determine the kloc-cli directory (needed for module mode fallback)
     kloc_cli_dir = Path(__file__).parent.parent.parent.parent / "kloc-cli"
     if not kloc_cli_dir.exists():
         # In Docker, kloc-cli is at /app/kloc-cli
@@ -215,7 +215,6 @@ def cli(reference_sot_path) -> OutputValidator:
 
     return OutputValidator(
         sot_path=reference_sot_path,
-        cli_module="src.cli",
         cli_dir=str(kloc_cli_dir),
         python_exe=python_exe,
     )
