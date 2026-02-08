@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "contract-tests-e2e"
+version = "0.1.0"
+description = "End-to-end integration tests for the full kloc pipeline"
+requires-python = ">=3.12"
+dependencies = [
+    "pytest>=8.0.0",
+    "pytest-json-report>=1.5.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+    "pipeline: Pipeline smoke tests",
+    "usages: Usage query E2E tests",
+    "deps: Dependency query E2E tests",
+    "inheritance: Inheritance query E2E tests",
+    "context: Context query E2E tests",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"

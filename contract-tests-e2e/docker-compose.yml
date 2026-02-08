@@ -1,0 +1,10 @@
+services:
+  contract-tests-e2e:
+    build:
+      context: ..
+      dockerfile: contract-tests-e2e/Dockerfile
+    working_dir: /app/contract-tests-e2e
+    # Mount Docker socket so scip-php can run Docker containers
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: ["pytest", "-v", "--tb=short"]
