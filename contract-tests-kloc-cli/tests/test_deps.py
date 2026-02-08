@@ -10,6 +10,7 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 from src.decorators import contract_test
+from src.helpers import collect_fqns
 from src.output_validator import OutputValidator
 
 
@@ -25,7 +26,7 @@ def test_deps_depth_1(cli: OutputValidator):
     assert result["target"]["fqn"] == "App\\Service\\OrderService"
     assert result["max_depth"] == 1
 
-    fqns = _collect_fqns(result["tree"])
+    fqns = collect_fqns(result["tree"])
     assert any("OrderRepository" in fqn for fqn in fqns), (
         f"Expected OrderRepository in deps, got: {fqns}"
     )
@@ -42,7 +43,7 @@ def test_deps_depth_2(cli: OutputValidator):
     result = cli.json_output("deps", "App\\Service\\OrderService", "--depth", "2")
     assert result["max_depth"] == 2
 
-    fqns = _collect_fqns(result["tree"])
+    fqns = collect_fqns(result["tree"])
     # Depth 2 should expand further
     assert len(fqns) > 0
 
@@ -58,17 +59,7 @@ def test_deps_controller(cli: OutputValidator):
     result = cli.json_output(
         "deps", "App\\Ui\\Rest\\Controller\\OrderController", "--depth", "1"
     )
-    fqns = _collect_fqns(result["tree"])
+    fqns = collect_fqns(result["tree"])
     assert any("OrderService" in fqn for fqn in fqns), (
         f"Expected OrderService in deps, got: {fqns}"
     )
-
-
-def _collect_fqns(tree: list[dict]) -> list[str]:
-    """Recursively collect all FQNs from a tree structure."""
-    fqns = []
-    for entry in tree:
-        fqns.append(entry["fqn"])
-        if entry.get("children"):
-            fqns.extend(_collect_fqns(entry["children"]))
-    return fqns

@@ -11,6 +11,7 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 from src.decorators import contract_test
+from src.helpers import collect_fqns
 from src.output_validator import OutputValidator
 
 
@@ -28,7 +29,7 @@ def test_inherit_direction_up(cli: OutputValidator):
     assert result["root"]["fqn"] == "App\\Service\\StandardOrderProcessor"
     assert result["direction"] == "up"
 
-    fqns = _collect_fqns(result["tree"])
+    fqns = collect_fqns(result["tree"])
     assert any("AbstractOrderProcessor" in fqn for fqn in fqns), (
         f"Expected AbstractOrderProcessor in parent chain, got: {fqns}"
     )
@@ -48,7 +49,7 @@ def test_inherit_direction_down(cli: OutputValidator):
     assert result["root"]["fqn"] == "App\\Service\\AbstractOrderProcessor"
     assert result["direction"] == "down"
 
-    fqns = _collect_fqns(result["tree"])
+    fqns = collect_fqns(result["tree"])
     assert any("StandardOrderProcessor" in fqn for fqn in fqns), (
         f"Expected StandardOrderProcessor in children, got: {fqns}"
     )
@@ -67,17 +68,7 @@ def test_inherit_interface_down(cli: OutputValidator):
     )
     assert result["root"]["fqn"] == "App\\Component\\EmailSenderInterface"
 
-    fqns = _collect_fqns(result["tree"])
+    fqns = collect_fqns(result["tree"])
     assert any("EmailSender" in fqn for fqn in fqns), (
         f"Expected EmailSender in implementors, got: {fqns}"
     )
-
-
-def _collect_fqns(tree: list[dict]) -> list[str]:
-    """Recursively collect all FQNs from a tree structure."""
-    fqns = []
-    for entry in tree:
-        fqns.append(entry["fqn"])
-        if entry.get("children"):
-            fqns.extend(_collect_fqns(entry["children"]))
-    return fqns

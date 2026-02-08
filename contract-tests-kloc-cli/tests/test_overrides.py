@@ -10,6 +10,7 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 from src.decorators import contract_test
+from src.helpers import collect_fqns
 from src.output_validator import OutputValidator
 
 
@@ -27,7 +28,7 @@ def test_overrides_direction_up(cli: OutputValidator):
     assert result["root"]["fqn"] == "App\\Component\\EmailSender::send()"
     assert result["direction"] == "up"
 
-    fqns = _collect_fqns(result["tree"])
+    fqns = collect_fqns(result["tree"])
     assert any("EmailSenderInterface" in fqn for fqn in fqns), (
         f"Expected EmailSenderInterface::send() in override chain, got: {fqns}"
     )
@@ -47,7 +48,7 @@ def test_overrides_direction_down(cli: OutputValidator):
     assert result["root"]["fqn"] == "App\\Component\\EmailSenderInterface::send()"
     assert result["direction"] == "down"
 
-    fqns = _collect_fqns(result["tree"])
+    fqns = collect_fqns(result["tree"])
     assert any("EmailSender" in fqn and "send" in fqn for fqn in fqns), (
         f"Expected EmailSender::send() in overriding methods, got: {fqns}"
     )
@@ -65,17 +66,7 @@ def test_overrides_abstract_down(cli: OutputValidator):
         "overrides", "App\\Service\\AbstractOrderProcessor::process()", "--direction", "down", "--depth", "1"
     )
 
-    fqns = _collect_fqns(result["tree"])
+    fqns = collect_fqns(result["tree"])
     assert any("StandardOrderProcessor" in fqn for fqn in fqns), (
         f"Expected StandardOrderProcessor::process() in overrides, got: {fqns}"
     )
-
-
-def _collect_fqns(tree: list[dict]) -> list[str]:
-    """Recursively collect all FQNs from a tree structure."""
-    fqns = []
-    for entry in tree:
-        fqns.append(entry["fqn"])
-        if entry.get("children"):
-            fqns.extend(_collect_fqns(entry["children"]))
-    return fqns

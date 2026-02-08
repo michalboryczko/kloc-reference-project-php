@@ -10,6 +10,7 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 from src.decorators import contract_test
+from src.helpers import collect_fqns
 from src.output_validator import OutputValidator
 
 
@@ -26,7 +27,7 @@ def test_usages_depth_1(cli: OutputValidator):
     assert result["max_depth"] == 1
 
     # Collect all FQNs in the tree
-    fqns = _collect_fqns(result["tree"])
+    fqns = collect_fqns(result["tree"])
     # OrderRepository uses Order (in save() and findById())
     assert any("OrderRepository" in fqn for fqn in fqns), (
         f"Expected OrderRepository in usages, got: {fqns}"
@@ -45,7 +46,7 @@ def test_usages_depth_2(cli: OutputValidator):
     assert result["max_depth"] == 2
 
     # Depth 2 should find users of OrderRepository and OrderService
-    fqns = _collect_fqns(result["tree"])
+    fqns = collect_fqns(result["tree"])
     # At depth 2, we should see more symbols than depth 1
     assert len(fqns) > 0
 
@@ -71,17 +72,7 @@ def test_usages_limit(cli: OutputValidator):
 def test_usages_order_repository(cli: OutputValidator):
     """Usages of OrderRepository should include OrderService."""
     result = cli.json_output("usages", "App\\Repository\\OrderRepository", "--depth", "1")
-    fqns = _collect_fqns(result["tree"])
+    fqns = collect_fqns(result["tree"])
     assert any("OrderService" in fqn for fqn in fqns), (
         f"Expected OrderService in usages, got: {fqns}"
     )
-
-
-def _collect_fqns(tree: list[dict]) -> list[str]:
-    """Recursively collect all FQNs from a tree structure."""
-    fqns = []
-    for entry in tree:
-        fqns.append(entry["fqn"])
-        if entry.get("children"):
-            fqns.extend(_collect_fqns(entry["children"]))
-    return fqns
