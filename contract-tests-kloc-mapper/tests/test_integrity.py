@@ -106,7 +106,7 @@ def test_no_duplicate_edges(sot_data: SoTData):
     description="Verifies same input produces identical sot.json output (same input twice -> same output)",
     category="integrity",
 )
-def test_deterministic_output(full_kloc_path, run_mapper, tmp_path):
+def test_deterministic_output(full_kloc_path, tmp_path):
     """Running kloc-mapper twice on the same input should produce identical output."""
     import subprocess
     from pathlib import Path

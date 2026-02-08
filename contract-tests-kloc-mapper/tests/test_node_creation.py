@@ -120,12 +120,7 @@ def test_function_node(sot_data: SoTData):
     """
     # formatPrice is a standalone function -- mapper creates it as Method
     # because SCIP descriptor pattern `name().` matches method check first
-    all_nodes = sot_data.nodes()
-    format_price = None
-    for n in all_nodes:
-        if "formatPrice" in n.get("name", ""):
-            format_price = n
-            break
+    format_price = sot_data.node(name="formatPrice")
     assert format_price is not None, "Should create node for standalone function formatPrice"
     # The mapper classifies it as Method (not Function) -- this is expected behavior
     assert format_price["kind"] in ("Function", "Method"), \
