@@ -1,0 +1,42 @@
+"""Contract test decorator for metadata and documentation generation.
+
+Python equivalent of the PHP #[ContractTest] attribute used in scip-php contract tests.
+Attaches metadata to pytest test functions for documentation generation.
+"""
+
+import functools
+
+
+def contract_test(
+    name: str,
+    description: str,
+    category: str = "",
+    status: str = "active",
+    experimental: bool = False,
+):
+    """Decorator that attaches contract test metadata to a pytest test function.
+
+    Args:
+        name: Human-readable test name shown in docs.
+        description: What the test verifies (detailed).
+        category: Test category (smoke, node-creation, edge-creation, etc.).
+        status: Test status: active, skipped, pending.
+        experimental: If True, test only runs with experimental flag.
+    """
+    def decorator(func):
+        func._contract_test = {
+            "name": name,
+            "description": description,
+            "category": category,
+            "status": status,
+            "experimental": experimental,
+        }
+
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            return func(*args, **kwargs)
+
+        wrapper._contract_test = func._contract_test
+        return wrapper
+
+    return decorator

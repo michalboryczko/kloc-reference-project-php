@@ -1,0 +1,13 @@
+services:
+  contract-tests-kloc-mapper:
+    build:
+      context: ..
+      dockerfile: contract-tests-kloc-mapper/Dockerfile
+    volumes:
+      - ..:/app
+      - pip-cache:/root/.cache/pip
+    working_dir: /app/contract-tests-kloc-mapper
+    command: ["pytest", "-v", "--tb=short"]
+
+volumes:
+  pip-cache:

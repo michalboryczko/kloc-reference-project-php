@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "contract-tests-kloc-mapper"
+version = "0.1.0"
+description = "Contract tests for kloc-mapper SCIP-to-SoT transformation"
+requires-python = ">=3.12"
+dependencies = [
+    "protobuf>=4.0.0",
+    "pytest>=8.0.0",
+    "pytest-json-report>=1.5.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+    "smoke: Basic output validity tests",
+    "node_creation: Node kind/fqn/range tests",
+    "edge_creation: Edge source/target/type tests",
+    "value_mapping: Value node correctness tests",
+    "call_mapping: Call node correctness tests",
+    "integrity: ID uniqueness, no orphans tests",
+]
