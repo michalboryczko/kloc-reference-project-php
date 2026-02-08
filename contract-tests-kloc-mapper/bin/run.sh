@@ -22,6 +22,7 @@ show_help() {
     echo "  test --suite <name>     Run specific test suite/category"
     echo "  docs                    Generate markdown documentation"
     echo "  docs --format=json      Generate JSON documentation"
+    echo "  docs --output=FILE      Write documentation to file"
     echo "  help                    Show this help"
     echo ""
     echo "Test suites: smoke, node_creation, edge_creation, value_mapping, call_mapping, integrity"
@@ -86,6 +87,7 @@ run_tests() {
 
 run_docs() {
     local format="$1"
+    local output="$2"
 
     echo -e "${GREEN}=== Generate Documentation ===${NC}"
     echo ""
@@ -99,6 +101,9 @@ run_docs() {
     local cmd="python bin/generate-docs.py"
     if [[ -n "$format" ]]; then
         cmd="$cmd --format=$format"
+    fi
+    if [[ -n "$output" ]]; then
+        cmd="$cmd --output=$output"
     fi
 
     docker compose run --rm contract-tests-kloc-mapper $cmd 2>/dev/null \
@@ -138,10 +143,15 @@ case "$COMMAND" in
     docs)
         shift || true
         FORMAT=""
+        OUTPUT=""
         while [[ $# -gt 0 ]]; do
             case "$1" in
                 --format=*)
                     FORMAT="${1#*=}"
+                    shift
+                    ;;
+                --output=*)
+                    OUTPUT="${1#*=}"
                     shift
                     ;;
                 *)
@@ -151,7 +161,7 @@ case "$COMMAND" in
                     ;;
             esac
         done
-        run_docs "$FORMAT"
+        run_docs "$FORMAT" "$OUTPUT"
         ;;
     help|--help|-h)
         show_help

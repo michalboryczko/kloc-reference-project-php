@@ -4,8 +4,6 @@ Python equivalent of the PHP #[ContractTest] attribute used in scip-php contract
 Attaches metadata to pytest test functions for documentation generation.
 """
 
-import functools
-
 
 def contract_test(
     name: str,
@@ -31,12 +29,6 @@ def contract_test(
             "status": status,
             "experimental": experimental,
         }
-
-        @functools.wraps(func)
-        def wrapper(*args, **kwargs):
-            return func(*args, **kwargs)
-
-        wrapper._contract_test = func._contract_test
-        return wrapper
+        return func
 
     return decorator
