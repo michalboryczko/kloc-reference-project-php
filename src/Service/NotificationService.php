@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Component\EmailSenderInterface;
-use App\Repository\OrderRepository;
+use App\Repository\OrderRepositoryInterface;
 
 final readonly class NotificationService
 {
     public function __construct(
-        private OrderRepository $orderRepository,
+        private OrderRepositoryInterface $orderRepository,
         private EmailSenderInterface $emailSender,
     ) {
     }

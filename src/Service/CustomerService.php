@@ -6,7 +6,7 @@ namespace App\Service;
 
 use App\Dto\CustomerOutput;
 use App\Entity\Customer;
-use App\Repository\CustomerRepository;
+use App\Repository\CustomerRepositoryInterface;
 
 /**
  * Customer service demonstrating nested property access chains.
@@ -21,7 +21,7 @@ use App\Repository\CustomerRepository;
 final readonly class CustomerService
 {
     public function __construct(
-        private CustomerRepository $repository,
+        private CustomerRepositoryInterface $repository,
     ) {
     }
 

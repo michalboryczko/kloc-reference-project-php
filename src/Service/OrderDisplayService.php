@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Entity\Order;
-use App\Repository\OrderRepository;
+use App\Repository\OrderRepositoryInterface;
 
 /**
  * Service for formatting and displaying order information.
@@ -23,7 +23,7 @@ use App\Repository\OrderRepository;
 final readonly class OrderDisplayService
 {
     public function __construct(
-        private OrderRepository $orderRepository,
+        private OrderRepositoryInterface $orderRepository,
     ) {
     }
 

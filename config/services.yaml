@@ -19,6 +19,8 @@ services:
 
     # Bind interface to implementation
     App\Component\EmailSenderInterface: '@App\Component\EmailSender'
+    App\Repository\OrderRepositoryInterface: '@App\Repository\InMemoryOrderRepository'
+    App\Repository\CustomerRepositoryInterface: '@App\Repository\InMemoryCustomerRepository'
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

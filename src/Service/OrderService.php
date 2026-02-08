@@ -9,7 +9,7 @@ use App\Component\InventoryCheckerInterface;
 use App\Dto\CreateOrderInput;
 use App\Dto\OrderOutput;
 use App\Entity\Order;
-use App\Repository\OrderRepository;
+use App\Repository\OrderRepositoryInterface;
 use App\Ui\Messenger\Message\OrderCreatedMessage;
 use DateTimeImmutable;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -17,7 +17,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 final readonly class OrderService
 {
     public function __construct(
-        private OrderRepository $orderRepository,
+        private OrderRepositoryInterface $orderRepository,
         private EmailSenderInterface $emailSender,
         private InventoryCheckerInterface $inventoryChecker,
         private MessageBusInterface $messageBus,

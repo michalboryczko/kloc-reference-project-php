@@ -7,7 +7,7 @@ namespace App\Repository;
 use App\Entity\Order;
 use DateTimeImmutable;
 
-final class OrderRepository
+final class InMemoryOrderRepository implements OrderRepositoryInterface
 {
     /** @var array<int, Order> */
     private static array $orders = [];

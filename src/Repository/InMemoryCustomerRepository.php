@@ -11,7 +11,7 @@ use App\Entity\Customer;
 /**
  * In-memory customer repository for testing.
  */
-final class CustomerRepository
+final class InMemoryCustomerRepository implements CustomerRepositoryInterface
 {
     /** @var array<int, Customer> */
     private static array $customers = [];
