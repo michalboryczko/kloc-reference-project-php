@@ -14,7 +14,7 @@ use App\Entity\Order;
  * - Method override: getName() overridden from parent
  * - Abstract method implementation: preProcess() implemented
  */
-final class StandardOrderProcessor extends AbstractOrderProcessor
+class StandardOrderProcessor extends AbstractOrderProcessor
 {
     /**
      * Implementation of abstract preProcess method.

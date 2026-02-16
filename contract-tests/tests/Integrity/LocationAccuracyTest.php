@@ -43,7 +43,7 @@ class LocationAccuracyTest extends CallsContractTestCase
     {
         $staticAccessCalls = $this->calls()
             ->kind('access_static')
-            ->callerContains('OrderRepository#save()')
+            ->callerContains('InMemoryOrderRepository#save()')
             ->calleeContains('$nextId')
             ->all();
 
@@ -87,7 +87,7 @@ class LocationAccuracyTest extends CallsContractTestCase
         // Find constructor
         $constructorCall = $this->calls()
             ->kind('constructor')
-            ->callerContains('OrderRepository#save()')
+            ->callerContains('InMemoryOrderRepository#save()')
             ->calleeContains('Order#__construct')
             ->first();
 
@@ -97,7 +97,7 @@ class LocationAccuracyTest extends CallsContractTestCase
         // Find static access
         $staticCall = $this->calls()
             ->kind('access_static')
-            ->callerContains('OrderRepository#save()')
+            ->callerContains('InMemoryOrderRepository#save()')
             ->calleeContains('$nextId')
             ->first();
 
@@ -149,7 +149,7 @@ class LocationAccuracyTest extends CallsContractTestCase
         foreach ($expectedAccesses as $expected) {
             $access = $this->calls()
                 ->kind('access')
-                ->callerContains('OrderRepository#save()')
+                ->callerContains('InMemoryOrderRepository#save()')
                 ->calleeContains($expected['callee_pattern'])
                 ->first();
 

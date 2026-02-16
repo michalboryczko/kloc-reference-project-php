@@ -97,7 +97,7 @@ class ArgumentBindingTest extends CallsContractTestCase
     {
         $constructorCall = $this->calls()
             ->kind('constructor')
-            ->callerContains('OrderRepository#save()')
+            ->callerContains('InMemoryOrderRepository#save()')
             ->calleeContains('Order')
             ->first();
 
@@ -182,7 +182,7 @@ class ArgumentBindingTest extends CallsContractTestCase
         // Find Order constructor in save() which has self::$nextId++ as first argument
         $constructorCall = $this->calls()
             ->kind('constructor')
-            ->callerContains('OrderRepository#save()')
+            ->callerContains('InMemoryOrderRepository#save()')
             ->calleeContains('Order')
             ->first();
 

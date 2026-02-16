@@ -6,7 +6,12 @@ namespace App\Repository;
 
 use App\Entity\Order;
 
-interface OrderRepositoryInterface
+/**
+ * Contract test patterns:
+ * - Interface extending interface (BaseRepositoryInterface)
+ * - Non-scalar parameter and return types
+ */
+interface OrderRepositoryInterface extends BaseRepositoryInterface
 {
     public function findById(int $id): ?Order;
 

@@ -44,13 +44,13 @@ abstract class CallsContractTestCase extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->skipIfExperimentalTest();
+        $this->skipIfConditionalTest();
     }
 
     /**
-     * Check if the current test is marked as experimental and skip if not in experimental mode.
+     * Check if the current test is marked as experimental or internal and skip if mode not active.
      */
-    private function skipIfExperimentalTest(): void
+    private function skipIfConditionalTest(): void
     {
         $testMethod = $this->name();
         $reflection = new ReflectionMethod($this, $testMethod);
@@ -68,6 +68,13 @@ abstract class CallsContractTestCase extends TestCase
                 $contractTest->name
             ));
         }
+
+        if ($contractTest->internal && !self::isInternalMode()) {
+            $this->markTestSkipped(sprintf(
+                '[INTERNAL] %s - requires --internal flag',
+                $contractTest->name
+            ));
+        }
     }
 
     /**
@@ -76,6 +83,14 @@ abstract class CallsContractTestCase extends TestCase
     public static function isExperimentalMode(): bool
     {
         return getenv('CONTRACT_TESTS_EXPERIMENTAL') === '1';
+    }
+
+    /**
+     * Check if internal packages mode is enabled via environment variable.
+     */
+    public static function isInternalMode(): bool
+    {
+        return getenv('CONTRACT_TESTS_INTERNAL') === '1';
     }
 
     // ═══════════════════════════════════════════════════════════════

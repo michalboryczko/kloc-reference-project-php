@@ -35,6 +35,9 @@
         <testsuite name="operator">
             <directory>tests/Operator</directory>
         </testsuite>
+        <testsuite name="internal">
+            <directory>tests/InternalPackages</directory>
+        </testsuite>
         <testsuite name="default">
             <directory>tests</directory>
             <exclude>tests/SmokeTest.php</exclude>
@@ -46,6 +49,7 @@
             <exclude>tests/CallKind</exclude>
             <exclude>tests/ValueKind</exclude>
             <exclude>tests/Operator</exclude>
+            <exclude>tests/InternalPackages</exclude>
         </testsuite>
     </testsuites>
 

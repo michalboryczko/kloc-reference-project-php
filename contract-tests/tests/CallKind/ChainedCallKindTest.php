@@ -156,7 +156,7 @@ class ChainedCallKindTest extends CallsContractTestCase
     {
         $staticAccessCalls = $this->calls()
             ->kind('access_static')
-            ->callerContains('OrderRepository#save()')
+            ->callerContains('InMemoryOrderRepository#save()')
             ->calleeContains('$nextId')
             ->all();
 
@@ -192,7 +192,7 @@ class ChainedCallKindTest extends CallsContractTestCase
     {
         $constructorCalls = $this->calls()
             ->kind('constructor')
-            ->callerContains('OrderRepository#save()')
+            ->callerContains('InMemoryOrderRepository#save()')
             ->calleeContains('Order#__construct')
             ->all();
 

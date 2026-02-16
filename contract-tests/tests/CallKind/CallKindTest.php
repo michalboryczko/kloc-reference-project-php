@@ -426,7 +426,7 @@ class CallKindTest extends CallsContractTestCase
         // customerEmail: $order->customerEmail
         $accessCalls = $this->calls()
             ->kind('access')
-            ->callerContains('OrderRepository#save()')
+            ->callerContains('InMemoryOrderRepository#save()')
             ->calleeContains('customerEmail')
             ->all();
 

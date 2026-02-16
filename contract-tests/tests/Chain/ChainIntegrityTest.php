@@ -289,7 +289,7 @@ class ChainIntegrityTest extends CallsContractTestCase
         // Find customerEmail property access in OrderRepository::save()
         $accessCall = $this->calls()
             ->kind('access')
-            ->callerContains('OrderRepository#save()')
+            ->callerContains('InMemoryOrderRepository#save()')
             ->calleeContains('customerEmail')
             ->first();
 

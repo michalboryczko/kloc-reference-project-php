@@ -43,4 +43,12 @@ final class InMemoryOrderRepository implements OrderRepositoryInterface
 
         return $order;
     }
+
+    /**
+     * @return array<int, Order>
+     */
+    public function findAll(): array
+    {
+        return self::$orders;
+    }
 }

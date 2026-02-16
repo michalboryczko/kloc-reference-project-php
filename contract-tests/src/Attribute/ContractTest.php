@@ -21,6 +21,7 @@ final readonly class ContractTest
      * @param string $category Test category (smoke, integrity, reference, chain, argument)
      * @param string $status Test status (active, skipped, pending)
      * @param bool $experimental Whether this test requires --experimental flag
+     * @param bool $internal Whether this test requires --internal flag (vendor packages as internal)
      */
     public function __construct(
         public string $name,
@@ -28,5 +29,6 @@ final readonly class ContractTest
         public string $category = '',
         public string $status = 'active',
         public bool $experimental = false,
+        public bool $internal = false,
     ) {}
 }

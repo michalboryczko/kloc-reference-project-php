@@ -4,17 +4,19 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Component\OrderProcessorInterface;
 use App\Entity\Order;
 
 /**
  * Abstract base class for order processing.
  *
  * Contract test patterns:
+ * - Abstract class implementing interface (OrderProcessorInterface)
  * - Class extends (extends): StandardOrderProcessor extends AbstractOrderProcessor
  * - Method override: process() overridden in child class
  * - Abstract method: preProcess() must be implemented
  */
-abstract class AbstractOrderProcessor
+abstract class AbstractOrderProcessor implements OrderProcessorInterface
 {
     /**
      * Template method for processing orders.

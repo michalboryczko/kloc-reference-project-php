@@ -21,6 +21,7 @@ show_help() {
     echo "  test --filter <name>    Run specific test by name/pattern"
     echo "  test --suite <name>     Run specific test suite"
     echo "  test --experimental     Include experimental tests and index experimental kinds"
+    echo "  test --internal         Include internal packages tests (symfony/messenger as internal)"
     echo "  docs                    Generate markdown documentation"
     echo "  docs --format=json      Generate JSON documentation"
     echo "  docs --format=csv       Generate CSV documentation"
@@ -39,6 +40,7 @@ show_help() {
 
 generate_index() {
     local experimental="${1:-}"
+    local internal="${2:-}"
 
     # Path to scip-php.sh wrapper
     SCIP_PHP="${SCIP_PHP_BINARY:-../../scip-php/bin/scip-php.sh}"
@@ -52,8 +54,19 @@ generate_index() {
     echo -e "${YELLOW}Generating index with scip-php...${NC}"
     mkdir -p output
 
+    local project_dir
+    project_dir="$(cd .. && pwd)"
+
+    # If internal mode, create scip-php.json config in project directory
+    local internal_config_created=""
+    if [[ "$internal" == "1" ]]; then
+        echo '{"internal_packages": ["symfony/messenger"]}' > "$project_dir/scip-php.json"
+        internal_config_created="1"
+        echo -e "${CYAN}  (with --internal flag: symfony/messenger as internal)${NC}"
+    fi
+
     # Build scip-php command
-    local scip_cmd="$SCIP_PHP -d $(cd .. && pwd) -o $(pwd)/output"
+    local scip_cmd="$SCIP_PHP -d $project_dir -o $(pwd)/output"
     if [[ "$experimental" == "1" ]]; then
         scip_cmd="$scip_cmd --experimental"
         echo -e "${CYAN}  (with --experimental flag)${NC}"
@@ -61,6 +74,17 @@ generate_index() {
 
     # Run scip-php on the parent project (kloc-reference-project-php)
     eval "$scip_cmd"
+    local exit_code=$?
+
+    # Clean up internal config if we created it
+    if [[ "$internal_config_created" == "1" ]]; then
+        rm -f "$project_dir/scip-php.json"
+    fi
+
+    if [[ $exit_code -ne 0 ]]; then
+        echo -e "${RED}Error: scip-php failed${NC}"
+        exit 1
+    fi
 
     # Check if index.json was generated
     if [[ -f "output/index.json" ]]; then
@@ -82,14 +106,18 @@ run_tests() {
     local filter="$1"
     local suite="$2"
     local experimental="$3"
+    local internal="$4"
 
     echo -e "${GREEN}=== Contract Tests ===${NC}"
     if [[ "$experimental" == "1" ]]; then
         echo -e "${CYAN}(experimental mode)${NC}"
     fi
+    if [[ "$internal" == "1" ]]; then
+        echo -e "${CYAN}(internal packages mode)${NC}"
+    fi
     echo ""
 
-    generate_index "$experimental"
+    generate_index "$experimental" "$internal"
     build_docker
 
     echo -e "${YELLOW}Running tests...${NC}"
@@ -103,10 +131,13 @@ run_tests() {
         cmd="$cmd --testsuite=$suite"
     fi
 
-    # Set experimental env var for PHPUnit
+    # Set env vars for PHPUnit
     local env_args=""
     if [[ "$experimental" == "1" ]]; then
-        env_args="-e CONTRACT_TESTS_EXPERIMENTAL=1"
+        env_args="$env_args -e CONTRACT_TESTS_EXPERIMENTAL=1"
+    fi
+    if [[ "$internal" == "1" ]]; then
+        env_args="$env_args -e CONTRACT_TESTS_INTERNAL=1"
     fi
 
     docker compose run --rm $env_args contract-tests $cmd
@@ -151,6 +182,7 @@ case "$COMMAND" in
         FILTER=""
         SUITE=""
         EXPERIMENTAL=""
+        INTERNAL=""
         while [[ $# -gt 0 ]]; do
             case "$1" in
                 --filter)
@@ -165,6 +197,10 @@ case "$COMMAND" in
                     EXPERIMENTAL="1"
                     shift
                     ;;
+                --internal)
+                    INTERNAL="1"
+                    shift
+                    ;;
                 *)
                     echo -e "${RED}Unknown option: $1${NC}"
                     show_help
@@ -172,7 +208,7 @@ case "$COMMAND" in
                     ;;
             esac
         done
-        run_tests "$FILTER" "$SUITE" "$EXPERIMENTAL"
+        run_tests "$FILTER" "$SUITE" "$EXPERIMENTAL" "$INTERNAL"
         ;;
     docs)
         shift

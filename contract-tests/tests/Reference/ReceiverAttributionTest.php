@@ -266,7 +266,7 @@ class ReceiverAttributionTest extends CallsContractTestCase
         // Find the $order->customerEmail access at line 31 in save()
         $customerEmailAccess = $this->calls()
             ->kind('access')
-            ->callerContains('OrderRepository#save()')
+            ->callerContains('InMemoryOrderRepository#save()')
             ->calleeContains('$customerEmail')
             ->atLine(31)
             ->first();
