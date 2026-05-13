@@ -17,10 +17,12 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
 
-    # Bind interface to implementation
+    # Bind interface/abstract to implementation
     App\Component\EmailSenderInterface: '@App\Component\EmailSender'
+    App\Component\InventoryCheckerInterface: '@App\Component\InventoryChecker'
     App\Repository\OrderRepositoryInterface: '@App\Repository\InMemoryOrderRepository'
     App\Repository\CustomerRepositoryInterface: '@App\Repository\InMemoryCustomerRepository'
+    App\Service\AbstractOrderProcessor: '@App\Service\StandardOrderProcessor'
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

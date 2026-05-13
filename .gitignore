@@ -13,6 +13,9 @@ index.scip
 calls.json
 index.kloc
 
+# kloc pipeline output (regeneratable)
+/.kloc/
+
 # Contract tests
 /contract-tests/vendor/
 /contract-tests/output/

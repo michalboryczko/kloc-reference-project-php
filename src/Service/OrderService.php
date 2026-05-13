@@ -10,9 +10,11 @@ use App\Dto\CreateOrderInput;
 use App\Dto\OrderOutput;
 use App\Entity\Order;
 use App\Repository\OrderRepositoryInterface;
+use App\Event\OrderCreatedEvent;
 use App\Ui\Messenger\Message\OrderCreatedMessage;
 use DateTimeImmutable;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 final readonly class OrderService
 {
@@ -22,6 +24,7 @@ final readonly class OrderService
         private InventoryCheckerInterface $inventoryChecker,
         private MessageBusInterface $messageBus,
         private AbstractOrderProcessor $orderProcessor,
+        private EventDispatcherInterface $eventDispatcher,
     ) {
     }
 
@@ -56,6 +59,7 @@ final readonly class OrderService
         );
 
         $this->messageBus->dispatch(new OrderCreatedMessage($savedOrder->id));
+        $this->eventDispatcher->dispatch(new OrderCreatedEvent($savedOrder->id, $savedOrder->customerEmail));
 
         return new OrderOutput(
             id: $savedOrder->id,
